@@ -73,6 +73,12 @@ STATICFILES_DIRS = (
     project_path('static'),
 )
 
+STATICFILES_FINDERS = (
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    'compressor.finders.CompressorFinder',
+)
+
 STATIC_ROOT = project_path('sitestatic')
 
 PROFILE_PHOTO_DIR = 'photos/profiles'
@@ -133,6 +139,7 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'debug_toolbar',
     'django_extensions',
+    'compressor',
 
     'utils',
     'accounts',
@@ -149,6 +156,15 @@ DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': show_debug_toolbar,
     'INTERCEPT_REDIRECTS': False,
 }
+
+# COMPRESSOR SETTINGS
+COMPRESS_PARSER = 'compressor.parser.BeautifulSoupParser'
+COMPRESS_JS_FILTERS = ['compressor.filters.closure.ClosureCompilerFilter']
+COMPRESS_CLOSURE_COMPILER_BINARY = 'java -jar ' + \
+        project_path('lib/closure-compiler.jar')
+COMPRESS_CLOSUER_COMPILER_ARGUMENTS = \
+        '--compilation_level ADVANCED_OPTIMIZATIONS'
+
 
 # PROJECT SPECIFIC SETTINGS
 MINIMUM_SNIPPET_LENGTH = 80

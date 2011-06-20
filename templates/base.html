@@ -1,10 +1,13 @@
 {% load thumbnail %}
+{% load compress %}
 
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>{% block title %}Caesar{% endblock %}</title>
+
+    {% compress css %}
     {% block css %}
     <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/screen.css" type="text/css" media="screen, projection" />
     <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/print.css" type="text/css" media="print" />
@@ -15,7 +18,9 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css" type="text/css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}css/toolbar.css" type="text/css" />
     {% endblock %}
+    {% endcompress %}
 
+    {% compress js %}
     {% block js %}
     <script type="text/javascript">
         // Allow us to only style elements if Javascript is enabled
@@ -87,6 +92,7 @@
     -->
     {% endif %}
     {% endblock %}
+    {% endcompress %}
 
 
 </head>
