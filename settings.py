@@ -95,6 +95,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'mit.auth.SSLRemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
@@ -137,6 +138,7 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'debug_toolbar',
     'django_extensions',
+    'djangorestframework',
 
     'utils',
     'accounts',

@@ -1,26 +1,28 @@
-from api.handlers import CommentHandler
-
-from django.utils import simplejson
 from django.conf.urls.defaults import *
-from piston.resource import Resource
-from piston.authentication import HttpBasicAuthentication
-from piston.utils import Mimer
 
-auth = HttpBasicAuthentication(realm="Caesar")
-ad = { 'authentication': auth }
+from djangorestframework.views import ListOrCreateModelView, InstanceModelView
+from djangorestframework.mixins import AuthMixin
+from djangorestframework.permissions import IsAuthenticated
+from djangorestframework.authentication import \
+        BasicAuthentication, UserLoggedInAuthentication
 
-# Workaround for django-piston bug in charset handling
-Mimer.register(simplejson.loads, 
-        ('application/json', 'application/json; charset=UTF-8',))
+from .resources import CommentResource, ChunkResource
+from .views import BundleView
 
-class CsrfExemptResource(Resource):
-    def __init__(self, handler, authentication=None):
-        super(CsrfExemptResource, self).__init__(handler, authentication)
-        self.csrf_exempt = getattr(self.handler, 'csrf_exempt', True)
+class AuthenticatedListOrCreateView(ListOrCreateModelView, AuthMixin):
+    permissions = (IsAuthenticated,)
+    authentication = (BasicAuthentication, UserLoggedInAuthentication)
 
-comment_handler = CsrfExemptResource(CommentHandler, **ad)
+class AuthenticatedInstanceModelView(InstanceModelView, AuthMixin):
+    permissions = (IsAuthenticated,)
+    authentication = (BasicAuthentication, UserLoggedInAuthentication)
 
 urlpatterns = patterns('',
-   (r'^comments/', comment_handler),
-   (r'^comment/(?P<comment_id>\d+)/', comment_handler)
+   (r'^bundle/$', BundleView.as_view()),
+   (r'^comments/$', 
+       AuthenticatedListOrCreateView.as_view(resource=CommentResource)),
+   (r'^comments/(?P<pk>\d+)/$',
+       AuthenticatedInstanceModelView.as_view(resource=CommentResource)),
+   (r'^chunks/(?P<pk>\d+)/$',
+       AuthenticatedInstanceModelView.as_view(resource=ChunkResource)),
 )
