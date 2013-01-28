@@ -27,7 +27,7 @@ class Semester(models.Model):
     id = models.AutoField(primary_key=True)
     subject = models.ForeignKey(Subject, related_name='semesters')
     semester = models.CharField(blank=True, null=False, max_length=32)
-    is_current_semester = models.BooleanField(default=False)
+    is_current_semester = models.BooleanField(default=False, verbose_name='Is in progress')
 
     def __str__(self):
       return '%s - %s' % (self.subject, self.semester)
