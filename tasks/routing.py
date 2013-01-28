@@ -164,11 +164,7 @@ def find_chunks(user, chunks, count, reviewers_per_chunk, min_student_lines, pri
     returns a generator of them.
     """
 
-    cluster_sizes = defaultdict(lambda : 0)
-    for chunk in chunks:
-        if chunk.cluster_id:
-            cluster_sizes[chunk.cluster_id] += 1
-
+    # TODO(mglidden): update this comment
     # Sort the chunks according to these criteria:
     #
     # For students and other:
@@ -212,64 +208,39 @@ def find_chunks(user, chunks, count, reviewers_per_chunk, min_student_lines, pri
             affinity += compute_affinity(user, reviewer)
         return affinity
 
-    def cluster_score(user, chunk):
-        if not chunk.cluster_id:
-            return 1
-        cluster_count = user.clusters[chunk.cluster_id]
-        if cluster_count >= app_settings.CHUNKS_PER_CLUSTER:
-            return 2
-        else:
-            return -cluster_count
+    def is_not_chunk_author(chunk):
+      return user is not chunk.submission.author
+
+    def is_not_already_reviewing(chunk):
+      return user not in chunk.reviewers
+
+    def has_enough_lines(chunk):
+      return True # preprocessor doesn't support student lines yet
+      return chunk.student_lines > min_student_lines
+
+    def number_of_reviewers(chunk):
+      if len(chunk.reviewers) >= reviewers_per_chunk:
+        return 0
+      return (len(chunk.reviewers) + 1.0) / (reviewers_per_chunk + 1.0) # the +1s mean that a chunk without any reviewers will be reviewed before a chunk with n reviewers.
+
+    def rand(chunk):
+      return random.random() / reviewers_per_chunk
+
+    hard_rules = [is_not_chunk_author, is_not_already_reviewing, has_enough_lines] # A chunk __must__ pass all hard rules to be given reviews. All items should be functions that return a boolen if the chunk could be assigned to the current user. The functions should take a single parameter - chunk
+    soft_rules = [number_of_reviewers, rand] # Soft rules influence the order that chunks get reviewed it. Each item should return a value between 0 and 1. The chunk with the highest score gets reviewed first.
 
 
-    def make_chunk_sort_key(user):
-      def chunk_sort_key(chunk):
-        review_priority = len(chunk.reviewers)
+    def and_hard_rules(chunk):
+      for rule in hard_rules:
+        if not rule(chunk):
+          return False
+      return True
 
-        if user.role == 'staff':
-          if len(chunk.reviewers) <= reviewers_per_chunk:
-            review_priority = -1 * len(chunk.reviewers)
-        else:
-          if len(chunk.reviewers) < reviewers_per_chunk:
-            review_priority = 0
+    def sum_soft_rules(chunk):
+      return sum([rule(chunk) for rule in soft_rules])
 
-        if chunk.student_lines <= min_student_lines:
-            review_priority = 15
-
-        type_priority = 0
-        if chunk.name in priority_dict:
-            type_priority = priority_dict[chunk.name]
-        elif chunk.class_type == 'TEST' and "StudentDefinedTests" in priority_dict:
-            type_priority = priority_dict["StudentDefinedTests"]
-        elif chunk.class_type == 'NONE' and "StudentDefinedClasses" in priority_dict:
-            type_priority = priority_dict["StudentDefinedClasses"]
-        else:
-            type_priority = 20
-        return (
-            user in chunk.reviewers,
-            user is chunk.submission.author,
-            review_priority,
-            type_priority,
--total_affinity(user, chunk.submission.reviewers),
-            -total_affinity(user, chunk.reviewers),
-            len(chunk.submission.reviewers),
-#                    -1*(chunk.return_count + chunk.for_nesting_depth + chunk.if_nesting_depth),
-            -(chunk.student_lines if chunk.student_lines != None else 0),
-        )
-      return chunk_sort_key
-
-    key = make_chunk_sort_key(user)
-
-    if not chunks:
-        return
-    for _ in itertools.repeat(None, count):
-        # TODO consider using a priority queue here
-        #random.shuffle(chunks)
-        chunk_to_assign = min(chunks, key=key)
-        if chunk_to_assign.assign_reviewer(user):
-            yield chunk_to_assign.id
-        else:
-            return
+    filtered = filter(and_hard_rules, chunks)
+    return [chunk.id for chunk in sorted(filtered, key=sum_soft_rules)[:count]]
 
 def _generate_tasks(assignment, reviewer, chunk_map,  chunk_id_task_map=defaultdict(list), max_tasks=sys.maxint, assign_more=False):
     """
