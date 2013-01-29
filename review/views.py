@@ -23,6 +23,10 @@ from pygments import highlight
 from pygments.lexers import JavaLexer
 from pygments.formatters import HtmlFormatter
 
+from PIL import Image as PImage
+from os.path import join as pjoin
+from django.conf import settings
+
 import datetime
 import sys
 
@@ -395,20 +399,35 @@ def summary(request, username):
 
 @login_required
 def edit_profile(request, username):
+    # can't edit if not current user
+    if request.user.username != username:
+        return redirect(reverse('review.views.summary', args=([username])))
     """Edit user profile."""
     profile = User.objects.get(username=username).profile
+    photo = None
     img = None
+    if profile.photo:
+        photo = profile.photo.url
+    else:
+        photo = "http://placehold.it/180x144&text=Student"
 
     if request.method == "POST":
         form = UserProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
+            if request.FILES:
+                # resize and save image under same filename
+                imfn = pjoin(settings.MEDIA_ROOT, profile.photo.name)
+                im = PImage.open(imfn)
+                im.thumbnail((180,180), PImage.ANTIALIAS)
+                im.save(imfn, "PNG")
             return redirect(reverse('review.views.summary', args=([username])))
     else:
         form = UserProfileForm(instance=profile)
 
     return render(request, 'review/edit_profile.html', {
-        'form': form
+        'form': form,
+        'photo': photo,
     })
 
 @login_required
