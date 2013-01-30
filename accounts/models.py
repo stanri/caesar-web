@@ -4,6 +4,7 @@ from chunks.models import Chunk, Assignment, Semester
 
 from sorl.thumbnail import ImageField
 from accounts.fields import MarkdownTextField
+from accounts.storage import OverwriteStorage
 
 from django.db import models
 from django.db.models.signals import post_save
@@ -30,32 +31,37 @@ class Member(models.Model):
       return '%s (%s), %s' % (self.user.username, self.role, self.semester)
 
 class UserProfile(models.Model):
-    # def get_photo_path(instance, filename):
-    #     return os.path.join(
-    #             settings.PROFILE_PHOTO_DIR,
-    #             instance.user.username,
-    #             filename)
+    def get_photo_path(instance, filename):
+        return os.path.join(
+                settings.PROFILE_PHOTO_DIR,
+                instance.user.username)
 
     ROLE_CHOICES = (
         ('T', 'Teaching staff'),
         ('S', 'Student'),
     )
     user = models.OneToOneField(User, related_name='profile')
-    # photo = ImageField(upload_to=get_photo_path)
+    
     assigned_chunks = models.ManyToManyField(Chunk, through='tasks.Task',
         related_name='reviewers')
     reputation = models.IntegerField(default=0, editable=True)
     role = models.CharField(max_length=1, choices=ROLE_CHOICES,
                             blank=True, null=True)
 
-    photo = models.ImageField(upload_to="images/", blank=True, null=True)
-    about = MarkdownTextField(allow_html=False, blank=True)
+    photo = models.ImageField(upload_to=get_photo_path, storage=OverwriteStorage(), blank=True, null=True,\
+        help_text='Use a JPEG or PNG photo.')
+    about = MarkdownTextField(allow_html=False, blank=True, \
+        help_text='Format using <a href="http://stackoverflow.com/editing-help">Markdown</a>.')
 
     # social network links
-    twitter = models.CharField(max_length=16, blank=True)
-    github = models.CharField(max_length=30, blank=True)
-    linkedin = models.URLField(blank=True)
-    website = models.URLField(blank=True)
+    twitter = models.CharField(max_length=16, blank=True, \
+        help_text='username. (ex.) ben-bitdiddle')
+    github = models.CharField(max_length=30, blank=True, \
+        help_text='username. (ex.) bitdiddle')
+    linkedin = models.URLField(blank=True,\
+        help_text='public profile URL. (ex.) http://www.linkedin.com/in/kiranbhattaram/')
+    website = models.URLField(blank=True,\
+        help_text='URL')
 
     token = models.ForeignKey(Token, related_name='invited', default=None, null=True)
     def __unicode__(self):

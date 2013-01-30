@@ -40,7 +40,11 @@ $(document).ready(function() {
 
  <div class="row">
     <div class="span3">
-      <img id='profile-photo' src="http://placehold.it/180x144&text=Student" />
+        {% if participant.profile.photo %}
+          <img id='profile-photo' class='img-rounded' src="{{ participant.profile.photo.url }}" />
+        {% else %}
+          <img id='profile-photo' class='img-rounded' src="http://placehold.it/180x144&text=Student" />
+        {% endif %}
       <ul class='social'>
         {% if participant.profile.twitter %}
           <a href='http://twitter.com/{{ participant.profile.twitter}}'><li><i class="foundicon-twitter"></i></li></a>
@@ -52,7 +56,7 @@ $(document).ready(function() {
           <a href='{{ participant.profile.linkedin}}'><li><i class="foundicon-linkedin"></i></li></a>
         {% endif %}
         {% if participant.profile.website %}
-          <a href='http://github.com/{{ participant.profile.website}}'><li><i class="foundicon-rss"></i></li></a>
+          <a href='{{ participant.profile.website}}'><li><i class="foundicon-rss"></i></li></a>
         {% endif %}
       </ul>
 
@@ -60,8 +64,13 @@ $(document).ready(function() {
     <div class="span9">
       <h2 class="name">{{ participant.first_name }} {{ participant.last_name }} <small>{{ participant.username }}</small></h2>
       <h4 class="task header"> reputation: {{participant.profile.reputation}}</h4>
+      {% for membership in participant.membership.all %}
+        <span class='label current-{{membership.semester.is_current_semester}} class'>
+          {{ membership.semester }} ({{ membership.role }})
+        </span>
+      {% endfor %}
       {% if user == participant %}
-        <a href="{% url review.views.edit_profile user.username %}">Edit profile</a>
+        <a class='btn btn-small' href="{% url review.views.edit_profile user.username %}">Edit profile</a>
       {% endif %}
       {%if user.profile.is_staff %}
           <a class="breadcrumb first-breadcrumb" href="{% url review.views.student_dashboard participant.username%}"> [{{participant.username}} Dashboard]</a> 
@@ -73,11 +82,13 @@ $(document).ready(function() {
 <div class="row">
     <div class="span3">
       <h3>About Me</h3>
+      {{ participant.profile.about_html|safe }}
     </div>
 
     <div class="span9" id='code'>
-      <h3>Reviews (+{{participant.profile.reputation}})</h3>
+      <h3>My Review Activity</h3>
       {% for assignment, review_data in assignment_data %}
+        {% if review_data %}
           <h3 class="assignment-display">
             <a name="assignment-display"></a> {{ assignment.name }} {%if not assignment.is_current_semester %} - {{ assignment.get_semester_display }} {% endif %}
             <div class="view-all-activity">
@@ -110,6 +121,7 @@ $(document).ready(function() {
             {% empty %}
             {% endfor %}
           </table>
+          {% endif %}
           {% empty %}
             <p>The user has no activity yet.</p>
           {% endfor %}
