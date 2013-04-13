@@ -443,7 +443,7 @@ def request_extension(request, assignment_id):
         if datetime.datetime.now() >  submission.duedate + datetime.timedelta(minutes=30):
             return redirect('review.views.dashboard')
 
-        extension = user.profile.extension_days()
+        extension = user.profile.extension_days(current_assignment.semester)
         extended_days = (submission.duedate - current_assignment.duedate).days
 
         # Number of late days the student would use
@@ -471,15 +471,15 @@ def request_extension(request, assignment_id):
             'days': days,
             'current_day': extended_days,
             'written_days': written_days,
-            'total_days': user.profile.extension_days() + extended_days
+            'total_days': user.profile.extension_days(current_assignment.semester) + extended_days
         })
     else: # user already requested an extension
         days = request.POST.get('dayselect', None)
         try:
-            extension_days = int(days)
-            total_left = user.profile.extension_days()
             current_assignment = Assignment.objects.get(id=assignment_id)
             submission = Submission.objects.get(assignment=current_assignment, author=user)
+            extension_days = int(days)
+            total_left = user.profile.extension_days(current_assignment.semester)
             extended_days = (submission.duedate - current_assignment.duedate).days
             if (submission.duedate - current_assignment.duedate).seconds/3600 == 12:
                 extended_days = 1

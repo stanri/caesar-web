@@ -98,9 +98,9 @@ class UserProfile(models.Model):
         return self.user.first_name + ' ' + self.user.last_name
       return self.user.username
 
-    def extension_days(self):
-      total_days = 10 #TODO: change after multi-class refactor
-      used_days = sum([extension.slack_used for extension in self.user.extensions.all()])
+    def extension_days(self, semester):
+      total_days = self.user.membership.get(semester=semester).slack_budget
+      used_days = sum([extension.slack_used for extension in self.user.extensions.filter(assignment__semester=semester)])
       return total_days - used_days
 
 @receiver(post_save, sender=User)
