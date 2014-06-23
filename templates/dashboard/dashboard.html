@@ -105,6 +105,8 @@ $(document).ready(function() {
       <a href="{% url 'accounts.views.request_extension' milestone.id %}"> Request extension</a>
     {% endif %}
     </td>
+<!-- TODO: Add number of slack days left for this class here. -->
+
   </tr>
   {% empty %}
   {% endfor %}
