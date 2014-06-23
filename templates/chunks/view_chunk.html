@@ -70,47 +70,53 @@
     </p>
   </div>
   {% endif %}
-  <div id="chunk-navigation">
-    <div id="task-count">
-      {% if task %}
-        {{ remaining_task_count|default:"No" }} 
-        {% if not task.status == 'C' or task.status == 'U' %} additional {% endif %}
-        code section{{ remaining_task_count|pluralize }}
-        remaining for review
-      {% else %}
-        You have not been assigned to review this code.
-      {% endif %}
-    </div>
-    {% if task %}
-      <!-- mark task you're viewing as complete -->
-      {% if remaining_task_count > 0 or last_task %}
-        <form method="get" action="{% url 'tasks.views.change_task' %}">
-          <input type="hidden" name="task_id" value="{{ task.id }}"/>
-          <input type="hidden" name="status" value='C'/>
-          <button id="done-button" type="submit">
-          {% if remaining_task_count > 0 %}
-            Next
-          {% elif last_task %}
-            Done!
+    
+  <div id="buttom-buttons">
+    
+      <div id="chunk-navigation">
+        <div id="task-count">
+          {% if task %}
+            {{ remaining_task_count|default:"No" }} 
+            {% if not task.status == 'C' or task.status == 'U' %} additional {% endif %}
+            code section{{ remaining_task_count|pluralize }}
+            remaining for review
+          {% else %}
+            You have not been assigned to review this code.
           {% endif %}
-          </button>
-        </form>
-      {% else %}
-          <a href='https://spreadsheets.google.com/spreadsheet/viewform?formkey=dGNyMlRVTGNTbXFZazA5bDRPd25sZFE6MQ' target="_blank"><button>Fill out the Feedback survey</button></a>
+        </div>
+        {% if task %}
+          <!-- mark task you're viewing as complete -->
+          {% if remaining_task_count > 0 or last_task %}
+            <form method="get" action="{% url 'tasks.views.change_task' %}">
+              <input type="hidden" name="task_id" value="{{ task.id }}"/>
+              <input type="hidden" name="status" value='C'/>
+              <button id="done-button" type="submit">
+              {% if remaining_task_count > 0 %}
+                Next
+              {% elif last_task %}
+                Done!
+              {% endif %}
+              </button>
+            </form>
+          {% else %}
+              <a href='https://spreadsheets.google.com/spreadsheet/viewform?formkey=dGNyMlRVTGNTbXFZazA5bDRPd25sZFE6MQ' target="_blank"><button>Fill out the Feedback survey</button></a>
+          {% endif %}
+        {% endif %}
+      </div>
+      <button id="toggle-comments-button" type="button">
+        Collapse all comments
+      </button>
+      <button id="toggle-auto-comments-button" type="button">
+        Collapse all checkstyle comments
+      </button>
+      {% if task %}
+      <button id="toggle-instructions-button" type="button">
+        Hide instructions
+      </button>
       {% endif %}
-    {% endif %}
+    
   </div>
-  <button id="toggle-comments-button" type="button">
-    Collapse all comments
-  </button>
-  <button id="toggle-auto-comments-button" type="button">
-    Collapse all checkstyle comments
-  </button>
-  {% if task %}
-  <button id="toggle-instructions-button" type="button">
-    Hide instructions
-  </button>
-  {% endif %}
+    
 </div>
 {% endblock %}
 
