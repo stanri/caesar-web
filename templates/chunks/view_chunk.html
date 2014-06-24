@@ -17,7 +17,6 @@
 <link rel="stylesheet" href="{{ STATIC_URL }}css/syntax.css" type="text/css" />
 <link rel="stylesheet" href="{{ STATIC_URL }}css/fullchunks.css" type="text/css" />
 
-
 {% endblock %}
 
 {% block js %}
@@ -31,13 +30,50 @@
     };
 </script>
 
+<script>
+function startChunkHeight(){
+
+//    var start1 = $(div1).offset().top;
+//    var start2=$(div2).offset().top;
+// 
+//    $.event.add(window, "scroll", function() {
+//        var p1 = $(window).scrollTop();
+//        $(div1).css('position',((p1)>0) ? 'fixed' : 'static');
+//        $(div1).css('top',((p1)>0) ? '0px' : '');
+//
+//        var p2 = $(window).scrollTop();
+//        $(div2).css('position',((p2)>start2) ? 'fixed' : 'static');
+//        $(div2).css('top',((p2)>start2) ? '0px' : '');     
+//    });
+    
+    var bottom = $('#secondary-toolbar').position().top + $('#secondary-toolbar').outerHeight(true);
+    $('#chunk-display').css('top', bottom);    
+} 
+
+    
+$(document).ready(function(){
+    var p1 = $(window).scrollTop();
+    var div1 = $('#toolbar-main');
+    var div2 = $('#secondary-toolbar');
+    $(div1).css('position', ((p1)>0) ? 'static' : 'fixed');
+    $(div1).css('top','0px');
+    $(div2).css('position', 'fixed');
+    $(div2).css('top', '29px');
+    startChunkHeight();
+})
+
+
+</script>
+
+
 <script type="text/javascript" src="{{ STATIC_URL }}js/chunk.js?v=1"></script>
 {% endblock %}
 
 {% block breadcrumbs %}
   <a class="breadcrumb first-breadcrumb" href="{% url 'dashboard.views.dashboard' %}">Dashboard</a>
   <span class="breadcrumb" href="{{ chunk.get_absolute_url }}">{{ chunk.name }}</span>
-  {% if similar_chunks %}
+  {% if similar_chunks %}        var bottom = $('#secondary-toolbar').position().top + $('#secondary-toolbar').outerHeight(true);
+    $('#chunk-display').css('top', bottom);
   <div class="dropdown">
     <a id="similar-link" class="breadcrumb dropdown-link">Similar code..</a>
     <ul class="dropdown-menu">
@@ -70,6 +106,7 @@
     </p>
   </div>
   {% endif %}
+    
   <div id="chunk-navigation">
     <div id="task-count">
       {% if task %}
@@ -111,6 +148,9 @@
     Hide instructions
   </button>
   {% endif %}
+    
+
+    
 </div>
 {% endblock %}
 
