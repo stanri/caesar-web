@@ -32,14 +32,9 @@
     automatically generated
     {% endif %}
     {% if not comment.deleted %}
-    by <span class="comment-author-name {{ member.get_role_display }}">
+    by <span class="comment-author-name {{ author.membership.all.0.get_role_display }}">
       {% if comment.type == 'U' %}
         <a href="{% url 'accounts.views.view_profile' author.username %}">
-        <!-- insert the person's profile thing here -->
-        <!--Member.objects.filter(user=User.objects.filter(username=author.username))[0].get_role_display()
-        OR
-        Member.objects.filter(user=author.username)
--->
         {{ author.get_full_name|default:author.username }}
         ({{author.profile.reputation}})
         </a>

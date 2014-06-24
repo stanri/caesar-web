@@ -215,7 +215,7 @@ def all_activity(request, review_milestone_id, username):
     except Member.DoesNotExist:
         if not user.is_staff:
             raise Http404
-    
+
     #get all relevant chunks
     chunks = Chunk.objects \
         .filter(file__submission__milestone= review_milestone.submit_milestone) \
