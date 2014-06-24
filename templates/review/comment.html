@@ -36,7 +36,7 @@
       {% if comment.type == 'U' %}
         <a href="{% url 'accounts.views.view_profile' author.username %}">
         <!-- insert the person's profile thing here -->
-        <!--{{ Member.objects.filter(user=User.objects.filter(username=author.username))[0].get_role_display() }}
+        <!--Member.objects.filter(user=User.objects.filter(username=author.username))[0].get_role_display()
         OR
         Member.objects.filter(user=author.username)
 -->

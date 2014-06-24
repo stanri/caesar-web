@@ -60,7 +60,7 @@ class UserProfile(models.Model):
         return os.path.join(
                 settings.PROFILE_PHOTO_DIR,
                 instance.user.username)
-    
+
     user = models.OneToOneField(User, related_name='profile')
     reputation = models.IntegerField(default=0, editable=True)
 
