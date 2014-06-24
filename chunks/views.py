@@ -51,7 +51,7 @@ def view_chunk(request, chunk_id):
     except Member.DoesNotExist:
         if not user.is_staff:
             raise PermissionDenied # you get a 401 page if you aren't a member of the semester
-    
+
     user_votes = dict((vote.comment_id, vote.value) \
             for vote in user.votes.filter(comment__chunk=chunk_id))
 
@@ -65,7 +65,7 @@ def view_chunk(request, chunk_id):
     comment_data = map(get_comment_data, chunk.comments.select_related('author__profile'))
 
     lexer = get_lexer_for_filename(chunk.file.path)
-    
+
     formatter = HtmlFormatter(cssclass='syntax', nowrap=True)
     numbers, lines = zip(*chunk.lines)
     # highlight the code this way to correctly identify multi-line constructs
@@ -140,14 +140,14 @@ def view_all_chunks(request, viewtype, submission_id):
     except Member.DoesNotExist:
         if not user.is_staff:
             raise PermissionDenied # you get a 401 page if you aren't a member of the semester
-        
+
     files = File.objects.filter(submission=submission_id).select_related('chunks')
     if not files:
         raise Http404
 
     milestone = files[0].submission.milestone
     milestone_name = milestone.full_name()
-    
+
     paths = []
     user_stats = []
     static_stats = []
@@ -166,7 +166,7 @@ def view_all_chunks(request, viewtype, submission_id):
     formatter = HtmlFormatter(cssclass='syntax', nowrap=True)
     for afile in files:
         staff_lines = StaffMarker.objects.filter(chunk__file=afile).order_by('start_line', 'end_line')
-    	lexer = get_lexer_for_filename(afile.path)
+        lexer = get_lexer_for_filename(afile.path)
         #prepare the file - get the lines that are part of chunk and the ones that aren't
         highlighted_lines_for_file = []
         numbers, lines = zip(*afile.lines)
@@ -350,7 +350,7 @@ def simulate(request, review_milestone_id):
     for name, lines_list in unimportant_graphs:
         chunks_data.append((name, 1))
     for name, lines_list in test_graphs:
-	    chunks_data.append((name, 0))
+        chunks_data.append((name, 0))
 
     if request.method == 'GET':
         to_assign = review_milestone.chunks_to_assign
@@ -447,7 +447,7 @@ def list_users(request, review_milestone_id):
         'reviewers_dicts': None,
         }
   def chunk_dict(chunk):
-    return 
+    return
 
   def reviewers_comment_strs(chunk=None, tasks=None):
     comment_count = defaultdict(int)
@@ -504,7 +504,7 @@ def list_users(request, review_milestone_id):
         'tasks': [],
         })
       data[authorid]['has_chunks'] = True
-      
+
   for task in Task.objects.select_related('chunk__file__submission__author', 'reviewer__user').filter(chunk__file__submission__milestone__id=assignment_id):
       authorid = task.chunk.file.submission.author_id
       chunkid = task.chunk_id
@@ -536,7 +536,7 @@ def list_users(request, review_milestone_id):
           data[user_id]['tasks'].append(task_dict(task))
 
   chunk_reviewers_map = defaultdict(list)
-  
+
   for user_data in data.values():
     for chunk in user_data['chunks']:
       chunk['reviewers_dicts'] = chunk_reviewers_map[chunk['id']]

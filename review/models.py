@@ -6,7 +6,7 @@ from django.db.models.signals import pre_save, post_save,\
 from django.dispatch import receiver
 from django.conf import settings
 
-from accounts.models import UserProfile
+from accounts.models import UserProfile, Member
 from chunks.models import Chunk, Batch
 
 import sys

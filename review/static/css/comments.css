@@ -23,7 +23,7 @@
     overflow: hidden;
 }
 .collapsed.comment.comment-reply {
-    height: 0px; 
+    height: 0px;
     border: 0px;
 }
 
@@ -97,11 +97,11 @@
     font-size: 10px;
 }
 
-.comment-author-name.staff {
+.comment-author-name.teacher {
     color: #482;
 }
 
-.comment-author-name.staff:before {
+.comment-author-name.teacher:before {
     content: "[T] ";
 }
 
@@ -111,6 +111,14 @@
 
 .comment-author-name.student:before {
     content: "[S] ";
+}
+
+.comment-author-name.volunteer {
+    color: #ff3636;
+}
+
+.comment-author-name.volunteer:before {
+    content: "[V] ";
 }
 
 .collapsed .comment-author {
@@ -193,8 +201,8 @@
 }
 
 .vote-buttons .vote.up {
-    background-image: url('../img/thumb-up.png'); 
-    background-repeat: no-repeat; 
+    background-image: url('../img/thumb-up.png');
+    background-repeat: no-repeat;
     background-position: 2px 2px;
     -webkit-border-top-right-radius: 0px;
     -webkit-border-bottom-right-radius: 0px;
