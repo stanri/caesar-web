@@ -49,9 +49,15 @@ function startChunkHeight(){
     var bottom = $('#secondary-toolbar').position().top + $('#secondary-toolbar').outerHeight(true);
     $('#chunk-display').css('top', bottom);    
 } 
+    
+function startCommentDisplay(){
+    var bottom = $('#secondary-toolbar').position().top + $('#secondary-toolbar').outerHeight(true);
+    $('#comment-display').css('top', bottom); 
+}
 
     
 $(document).ready(function(){
+     $('#comment-display').css('position', 'relative'); 
     var p1 = $(window).scrollTop();
     var div1 = $('#toolbar-main');
     var div2 = $('#secondary-toolbar');
@@ -60,6 +66,7 @@ $(document).ready(function(){
     $(div2).css('position', 'fixed');
     $(div2).css('top', '29px');
     startChunkHeight();
+    startCommentDisplay()
 })
 
 

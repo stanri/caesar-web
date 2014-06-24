@@ -704,22 +704,44 @@ if (instructionsState === 'visible') {
 $('#toggle-instructions-button')
         .text(toggleInstructionsText[instructionsState]);
 
+
 $('#toggle-instructions-button').click(function() {
     
+    var p1 = $(window).scrollTop();
+    console.log('FAIL');
+    
     if (instructionsState === 'visible') {
-        $('#instructions-text').slideUp(400, function(){ startChunkHeight()});
+        $('#instructions-text').slideUp(400, function(){ 
+            if (p1 < $('#secondary-toolbar').outerHeight(true) + $('#toolbar-main').outerHeight(true) ){
+                startChunkHeight(); 
+                startCommentDisplay();
+            }
+            else{
+                $('#secondary-toolbar').css('position','fixed');
+                $('#toolbar-main').css('position','fixed');
+            }
+        })
         instructionsState = 'hidden';
-    } else {
-        $('#instructions-text').slideDown(400,  function(){ startChunkHeight()});
+    } 
+    else {
+        $('#instructions-text').slideDown(400,  function(){ 
+            if (p1 < $('#secondary-toolbar').outerHeight(true) + $('#toolbar-main').outerHeight(true) ){
+                startChunkHeight(); 
+                startCommentDisplay();
+            }
+            else{
+                $('#secondary-toolbar').css('position','fixed');
+                $('#toolbar-main').css('position','fixed');
+            }
+        })
         instructionsState = 'visible';
     }
     $.cookie('instructionsState', instructionsState);
     $(this).text(toggleInstructionsText[instructionsState]);
-    
-    console.log($('#secondary-toolbar').outerHeight(true));
 
-    //setTimeout(startChunkHeight(), 450);
 });
+    
+
 
 $('.dropdown-link').click(function() {
     var menu = $(this).next('.dropdown-menu');
