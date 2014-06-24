@@ -24,8 +24,9 @@
   {% endif %}
 
 <!--    b = Member.objects.filter(user=a) where a = User.objects.filter(username='kleinab')-->
-  <div class="comment-author"> <!-- Note to self: look at select_related(comment__membership) -->
-    {% with author=comment.author %} <!-- author is type ForeignKey[id], as user is for membership -->
+  <div class="comment-author">
+    <!-- author is type ForeignKey[id], as user is for membership -->
+    {% with author=comment.author %}
     {% if comment.type == 'U' %}
     {{comment.created|timesince_human}} ago {% if comment.is_edited %} * {% endif %}
     {% else %}

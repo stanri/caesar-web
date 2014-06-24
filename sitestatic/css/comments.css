@@ -97,11 +97,11 @@
     font-size: 10px;
 }
 
-.comment-author-name.staff {
+.comment-author-name.teacher {
     color: #482;
 }
 
-.comment-author-name.staff:before {
+.comment-author-name.teacher:before {
     content: "[T] ";
 }
 
