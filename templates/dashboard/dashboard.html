@@ -92,7 +92,7 @@ $(document).ready(function() {
 </div>
 
 <table class="current-assignment">
-  {% for milestone, extension in current_milestone_data %}
+  {% for (milestone, extension, slack_left) in current_milestone_data %}
   <tr class="assignment-line">
     <td class="black-text"> {{ milestone.full_name }} </td>
     <td class="grey-text"> Due on: {{ milestone.duedate|date:"D, N d, Y, P" }} 
@@ -103,10 +103,9 @@ $(document).ready(function() {
     <td class="=grey-text">
     {% if milestone.max_extension > 0 %}
       <a href="{% url 'accounts.views.request_extension' milestone.id %}"> Request extension</a>
+      <span> Total slack days remaining: {{slack_left}} </span>
     {% endif %}
     </td>
-<!-- TODO: Add number of slack days left for this class here. -->
-
   </tr>
   {% empty %}
   {% endfor %}
