@@ -52,7 +52,6 @@ def new_comment(request):
         if form.is_valid():
             comment = form.save(commit=False)
             comment.author = request.user
-            role = Member.objects.filter(user=comment.author)[0].get_role_display()
             comment.save()
             user = request.user
             chunk = comment.chunk

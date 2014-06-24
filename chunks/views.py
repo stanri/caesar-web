@@ -62,7 +62,7 @@ def view_chunk(request, chunk_id):
         snippet = chunk.generate_snippet(comment.start, comment.end)
         return (comment, vote, snippet)
 
-    comment_data = map(get_comment_data, chunk.comments.select_related('author__profile').select_related('author__membership'))
+    comment_data = map(get_comment_data, chunk.comments.select_related('author__profile'))
 
     lexer = get_lexer_for_filename(chunk.file.path)
 
