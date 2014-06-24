@@ -47,13 +47,10 @@ function startChunkHeight(){
 //    });
     
     var bottom = $('#secondary-toolbar').position().top + $('#secondary-toolbar').outerHeight(true);
-    $('#chunk-display').css('top', bottom);    
+    $('#chunk-display').css('top', bottom);
+     $('#comment-display').css('top', bottom); 
+    $('#view-all-code').css('top', bottom);
 } 
-    
-function startCommentDisplay(){
-    var bottom = $('#secondary-toolbar').position().top + $('#secondary-toolbar').outerHeight(true);
-    $('#comment-display').css('top', bottom); 
-}
 
     
 $(document).ready(function(){
@@ -65,10 +62,12 @@ $(document).ready(function(){
     $(div1).css('top','0px');
     $(div2).css('position', 'fixed');
     $(div2).css('top', '29px');
+    var bottom = $('#secondary-toolbar').position().top + $('#secondary-toolbar').outerHeight(true);
     
+    $('#view-all-code').css('top', bottom);
+    $('#view-all-code').css('position', 'relative');
     
     startChunkHeight();
-    startCommentDisplay();
 })
 
 
