@@ -54,10 +54,6 @@ class Comment(models.Model):
             return True
         return False
 
-    #Member.objects.filter(user=User.objects.filter(username=author.username)[0])[0].get_role_display()
-    def get_role_from_username(self, username): #username is type ForeignKey[id]
-        return Member.objects.filter(user=username)[0].get_role_display()
-
     def get_comment_vote(self):
         try:
             vote = self.votes.get(author=request.user.id).value

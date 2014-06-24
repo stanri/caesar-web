@@ -52,6 +52,7 @@ def new_comment(request):
         if form.is_valid():
             comment = form.save(commit=False)
             comment.author = request.user
+            role = Member.objects.filter(user=comment.author)[0].get_role_display()
             comment.save()
             user = request.user
             chunk = comment.chunk
@@ -215,7 +216,7 @@ def all_activity(request, review_milestone_id, username):
     except Member.DoesNotExist:
         if not user.is_staff:
             raise Http404
-    
+
     #get all relevant chunks
     chunks = Chunk.objects \
         .filter(file__submission__milestone= review_milestone.submit_milestone) \
