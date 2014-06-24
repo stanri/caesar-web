@@ -33,9 +33,11 @@
     automatically generated
     {% endif %}
     {% if not comment.deleted %}
-    by <span class="comment-author-name {{ author.membership.all.0.get_role_display }}">
+    by <span class="comment-author-name
+        {{ author.membership.all.0.get_role_display }}">
       {% if comment.type == 'U' %}
         <a href="{% url 'accounts.views.view_profile' author.username %}">
+<!--        logging.debug(author.membership)-->
         {{ author.get_full_name|default:author.username }}
         ({{author.profile.reputation}})
         </a>

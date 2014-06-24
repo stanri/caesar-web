@@ -101,6 +101,11 @@
     color: #482;
 }
 
+.comment-author-name.teacher a:link {
+    color: #482 !important;
+}
+
+
 .comment-author-name.teacher:before {
     content: "[T] ";
 }
@@ -115,6 +120,10 @@
 
 .comment-author-name.volunteer {
     color: #ff3636;
+}
+
+.comment-author-name.volunteer a:link {
+    color: #ff3636 !important;
 }
 
 .comment-author-name.volunteer:before {

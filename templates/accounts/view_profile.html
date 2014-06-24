@@ -79,7 +79,7 @@ $(document).ready(function() {
       </div>
       {% endif %}
       {% if user.is_staff %}
-          <a class="breadcrumb first-breadcrumb" href="{% url 'dashboard.views.student_dashboard' participant.username %}"> [{{participant.username}} Dashboard]</a> 
+          <a class="breadcrumb first-breadcrumb" href="{% url 'dashboard.views.student_dashboard' participant.username %}"> [{{participant.username}} Dashboard]</a>
       {%endif%}
     </div>
   </div>
@@ -97,7 +97,7 @@ $(document).ready(function() {
       {% if submissions %}
         {% for submission in submissions %}
           <h4 class="assignment-display">
-            <a href="{% url 'chunks.views.view_all_chunks' 'code' submission.id %}">{{ submission.name }}</a> 
+            <a href="{% url 'chunks.views.view_all_chunks' 'code' submission.id %}">{{ submission.name }}</a>
             <span class='muted pull-right'>{{ submission.assignment.semester }}</span>
           </h4>
         {% endfor %}
@@ -129,9 +129,9 @@ $(document).ready(function() {
                                     {% endif %}
                     {% else %}comment-{{comment.id}}-{{comment.chunk.id}}
                     {% endif %}" class="{% if user.is_staff or user == participant or review_milestone.assignment.semester in semesters_taught %}activity-line{%else%}non-activity-line{%endif%}">
-              
+
               <td><span class="type" id="{{type}}" title="{{type}}"></span></td>
-              
+
               {% if comment.upvote_count == 0 and comment.downvote_count == 0 or is_vote %}
               <td colspan="2" class="{% if is_vote %}grey-text{% else %}black-text{% endif %}"> {{ snippet }} </td>
             {% else %}
@@ -141,7 +141,7 @@ $(document).ready(function() {
 
               <td class="grey-text"> {{ comment.chunk.name }} </td>
               <td class="grey-text"> {{ comment.modified }} </td>
-              
+
             </tr>
             {% empty %}
             {% endfor %}
