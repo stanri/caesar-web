@@ -101,7 +101,7 @@
     color: #482;
 }
 
-.comment-author-name.teacher a:link {
+.comment-author-name.teacher a {
     color: #482 !important;
 }
 
@@ -122,7 +122,7 @@
     color: #ff3636;
 }
 
-.comment-author-name.volunteer a:link {
+.comment-author-name.volunteer a {
     color: #ff3636 !important;
 }
 

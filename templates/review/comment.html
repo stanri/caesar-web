@@ -34,10 +34,13 @@
     {% endif %}
     {% if not comment.deleted %}
     by <span class="comment-author-name
-        {{ author.membership.all.0.get_role_display }}">
+            {% for membership in author.membership.all %}
+                {% if comment.chunk.file.submission.milestone.assignment.semester == membership.semester %}
+                    {{ membership.get_role_display }}
+                {% endif %}
+            {% endfor %}">
       {% if comment.type == 'U' %}
         <a href="{% url 'accounts.views.view_profile' author.username %}">
-<!--        logging.debug(author.membership)-->
         {{ author.get_full_name|default:author.username }}
         ({{author.profile.reputation}})
         </a>
