@@ -705,15 +705,20 @@ $('#toggle-instructions-button')
         .text(toggleInstructionsText[instructionsState]);
 
 $('#toggle-instructions-button').click(function() {
+    
     if (instructionsState === 'visible') {
-        $('#instructions-text').slideUp(400);
+        $('#instructions-text').slideUp(400, function(){ startChunkHeight()});
         instructionsState = 'hidden';
     } else {
-        $('#instructions-text').slideDown(400);
+        $('#instructions-text').slideDown(400,  function(){ startChunkHeight()});
         instructionsState = 'visible';
     }
     $.cookie('instructionsState', instructionsState);
     $(this).text(toggleInstructionsText[instructionsState]);
+    
+    console.log($('#secondary-toolbar').outerHeight(true));
+
+    //setTimeout(startChunkHeight(), 450);
 });
 
 $('.dropdown-link').click(function() {

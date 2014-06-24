@@ -9,6 +9,8 @@
 {{ block.super }}
 <script>
 $(document).ready(function() {
+    
+    
 
     $('.submission-line').click(function(e) {
       var submission_id = this.id.split('-')[1];
@@ -23,9 +25,11 @@ $(document).ready(function() {
     var toggleInstructionsText = [ 'Hide instructions', 'Show instructions' ];
     var textIndex = 0;
     $('#toggle-instructions-button').click(function() {
+        
         $('#instructions-text').toggle(400);
         textIndex = 1 - textIndex;
         $(this).text(toggleInstructionsText[textIndex]);
+        
     });
     
     $('#historic_content').hide();
