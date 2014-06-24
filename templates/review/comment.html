@@ -34,11 +34,13 @@
     {% endif %}
     {% if not comment.deleted %}
     by <span class="comment-author-name
+        {% with commentSemester=comment.chunk.file.submission.milestone.assignment.semester %}
             {% for membership in author.membership.all %}
-                {% if comment.chunk.file.submission.milestone.assignment.semester == membership.semester %}
+                {% if commentSemester == membership.semester %}
                     {{ membership.get_role_display }}
                 {% endif %}
-            {% endfor %}">
+            {% endfor %}
+        {% endwith %}">
       {% if comment.type == 'U' %}
         <a href="{% url 'accounts.views.view_profile' author.username %}">
         {{ author.get_full_name|default:author.username }}
