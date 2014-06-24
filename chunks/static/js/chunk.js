@@ -708,17 +708,12 @@ $('#toggle-instructions-button')
 $('#toggle-instructions-button').click(function() {
     
     var p1 = $(window).scrollTop();
-    console.log('FAIL');
     
     if (instructionsState === 'visible') {
         $('#instructions-text').slideUp(400, function(){ 
             if (p1 < $('#secondary-toolbar').outerHeight(true) + $('#toolbar-main').outerHeight(true) ){
                 startChunkHeight(); 
                 startCommentDisplay();
-            }
-            else{
-                $('#secondary-toolbar').css('position','fixed');
-                $('#toolbar-main').css('position','fixed');
             }
         })
         instructionsState = 'hidden';
@@ -729,13 +724,10 @@ $('#toggle-instructions-button').click(function() {
                 startChunkHeight(); 
                 startCommentDisplay();
             }
-            else{
-                $('#secondary-toolbar').css('position','fixed');
-                $('#toolbar-main').css('position','fixed');
-            }
         })
         instructionsState = 'visible';
     }
+    
     $.cookie('instructionsState', instructionsState);
     $(this).text(toggleInstructionsText[instructionsState]);
 

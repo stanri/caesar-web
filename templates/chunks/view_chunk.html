@@ -57,17 +57,18 @@ function startCommentDisplay(){
 
     
 $(document).ready(function(){
-     $('#comment-display').css('position', 'relative'); 
-    var p1 = $(window).scrollTop();
+    $('#comment-display').css('position', 'relative'); 
+    //var p1 = $(window).scrollTop();
     var div1 = $('#toolbar-main');
     var div2 = $('#secondary-toolbar');
-    $(div1).css('position', ((p1)>0) ? 'static' : 'fixed');
+    $(div1).css('position','fixed');
     $(div1).css('top','0px');
     $(div2).css('position', 'fixed');
     $(div2).css('top', '29px');
     
+    
     startChunkHeight();
-    startCommentDisplay()
+    startCommentDisplay();
 })
 
 
