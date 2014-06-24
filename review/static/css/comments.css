@@ -110,14 +110,6 @@
     content: "[T] ";
 }
 
-.comment-author-name.student {
-    color: #66f;
-}
-
-.comment-author-name.student:before {
-    content: "[S] ";
-}
-
 .comment-author-name.volunteer {
     color: #ff3636;
 }
@@ -128,6 +120,14 @@
 
 .comment-author-name.volunteer:before {
     content: "[V] ";
+}
+
+.comment-author-name.student {
+    color: #66f;
+}
+
+.comment-author-name.student:before {
+    content: "[S] ";
 }
 
 .collapsed .comment-author {

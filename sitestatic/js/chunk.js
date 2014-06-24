@@ -713,7 +713,6 @@ $('#toggle-instructions-button').click(function() {
         $('#instructions-text').slideUp(400, function(){ 
             if (p1 < $('#secondary-toolbar').outerHeight(true) + $('#toolbar-main').outerHeight(true) ){
                 startChunkHeight(); 
-//                startCommentDisplay();
             }
         })
         instructionsState = 'hidden';
@@ -722,7 +721,6 @@ $('#toggle-instructions-button').click(function() {
         $('#instructions-text').slideDown(400,  function(){ 
             if (p1 < $('#secondary-toolbar').outerHeight(true) + $('#toolbar-main').outerHeight(true) ){
                 startChunkHeight(); 
-//                startCommentDisplay();
             }
         })
         instructionsState = 'visible';
