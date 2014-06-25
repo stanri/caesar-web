@@ -35,7 +35,7 @@ function startChunkHeight(){
 
 //    var start1 = $(div1).offset().top;
 //    var start2=$(div2).offset().top;
-// 
+//
 //    $.event.add(window, "scroll", function() {
 //        var p1 = $(window).scrollTop();
 //        $(div1).css('position',((p1)>0) ? 'fixed' : 'static');
@@ -43,18 +43,18 @@ function startChunkHeight(){
 //
 //        var p2 = $(window).scrollTop();
 //        $(div2).css('position',((p2)>start2) ? 'fixed' : 'static');
-//        $(div2).css('top',((p2)>start2) ? '0px' : '');     
+//        $(div2).css('top',((p2)>start2) ? '0px' : '');
 //    });
-    
-    var bottom = $('#secondary-toolbar').position().top + $('#secondary-toolbar').outerHeight(true);
-    $('#chunk-display').css('top', bottom);
-     $('#comment-display').css('top', bottom); 
-    $('#view-all-code').css('top', bottom);
-} 
 
-    
+    var bottom = $('#secondary-toolbar').position().top + $('#secondary-toolbar').outerHeight(true); //the bottom of the secondary toolbar is its position at top plus the height of it, including margins.
+    $('#chunk-display').css('top', bottom);
+     $('#comment-display').css('top', bottom);
+    $('#view-all-code').css('top', bottom);
+}
+
+
 $(document).ready(function(){
-    $('#comment-display').css('position', 'relative'); 
+    $('#comment-display').css('position', 'relative');
     //var p1 = $(window).scrollTop();
     var div1 = $('#toolbar-main');
     var div2 = $('#secondary-toolbar');
@@ -63,10 +63,10 @@ $(document).ready(function(){
     $(div2).css('position', 'fixed');
     $(div2).css('top', '29px');
     var bottom = $('#secondary-toolbar').position().top + $('#secondary-toolbar').outerHeight(true);
-    
+
     $('#view-all-code').css('top', bottom);
     $('#view-all-code').css('position', 'relative');
-    
+
     startChunkHeight();
 })
 
@@ -100,7 +100,7 @@ $(document).ready(function(){
 <div id="secondary-toolbar-inner">
   {% if task %}
   <div id="instructions-text">
-    <p>Please review this code as if you are writing to the student who wrote 
+    <p>Please review this code as if you are writing to the student who wrote
     it.  You can:</p>
     <ul>
       <li>Make a comment by clicking or selecting the relevant code lines. <span class="colorred"> The white lines show student-authored code; gray lines were provided by staff.</span></li>
@@ -114,11 +114,11 @@ $(document).ready(function(){
     </p>
   </div>
   {% endif %}
-    
+
   <div id="chunk-navigation">
     <div id="task-count">
       {% if task %}
-        {{ remaining_task_count|default:"No" }} 
+        {{ remaining_task_count|default:"No" }}
         {% if not task.status == 'C' or task.status == 'U' %} additional {% endif %}
         code section{{ remaining_task_count|pluralize }}
         remaining for review
@@ -141,7 +141,7 @@ $(document).ready(function(){
           </button>
         </form>
       {% else %}
-          <a href='https://spreadsheets.google.com/spreadsheet/viewform?formkey=dGNyMlRVTGNTbXFZazA5bDRPd25sZFE6MQ' target="_blank"><button>Fill out the Feedback survey</button></a>
+          <a href='https://spreadsheets.google.com/spreadsheet/viewform?formkey=dGNyMlRVTGNTbXFZazA5bDRPd25sZFE6MQ' target="_blank"><button>Fill out feedback survey</button></a>
       {% endif %}
     {% endif %}
   </div>
@@ -156,9 +156,9 @@ $(document).ready(function(){
     Hide instructions
   </button>
   {% endif %}
-    
 
-    
+
+
 </div>
 {% endblock %}
 
@@ -167,8 +167,8 @@ $(document).ready(function(){
 {% comment %}
 <div id="chunk-info" class="span-24">
     <h3>
-    {{ chunk.file.submission.assignment.name }} :: 
-    {{ chunk.file.submission.name }} :: 
+    {{ chunk.file.submission.assignment.name }} ::
+    {{ chunk.file.submission.name }} ::
     {{ chunk.file.path }}
     </h3>
 </div>
@@ -182,7 +182,7 @@ $(document).ready(function(){
 <div id="comment-display" class="span-6">
   <div style="mid-width:30em" id="comment-display-inner" class="file-{{file.id}} files">
      {% for comment, vote, snippet in comment_data %}
-       {% include "review/comment.html" %} 
+       {% include "review/comment.html" %}
      {% endfor %}
   </div>
 </div>
