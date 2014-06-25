@@ -594,6 +594,7 @@ if (caesar.state.fullView) {
 
 $('#new-comment-form').live('submit', function() {
     var dataString = $(this).serialize();
+    console.log(dataString);
     $.post(caesar.urls.new_comment, dataString, function(data) {
         var newNode = $(data);
         $('.new-comment').replaceWith(newNode);
@@ -694,8 +695,7 @@ var toggleInstructionsText = {
     visible: 'Hide instructions',
     hidden: 'Show instructions'
 };
-
-var instructionsState = $.cookie('instructionsState') || 'visible'; //storing instructionState in a cookie
+var instructionsState = $.cookie('instructionsState') || 'visible';
 
 if (instructionsState === 'visible') {
     $('#instructions-text').show();
@@ -704,7 +704,6 @@ if (instructionsState === 'visible') {
 } else {
     $('#instructions-text').hide();
 }
-
 $('#toggle-instructions-button')
         .text(toggleInstructionsText[instructionsState]);
 
@@ -714,19 +713,25 @@ $('#toggle-instructions-button').click(function() {
     var p1 = $(window).scrollTop();
 
     if (instructionsState === 'visible') {
-        $('#instructions-text').slideUp(400, function(){
-            if (p1 < $('#secondary-toolbar').outerHeight(true) + $('#toolbar-main').outerHeight(true)){
-                startChunkHeight();
-            }
-        });
-        instructionsState = 'hidden';
-    }
-    else { //if instructionsState === 'hidden'
-        $('#instructions-text').slideDown(400,  function(){
+        $('#instructions-text').slideUp({
+            duration: 400,
+            queue: false,
+            complete: function(){
             if (p1 < $('#secondary-toolbar').outerHeight(true) + $('#toolbar-main').outerHeight(true) ){
                 startChunkHeight();
             }
-        });
+        }});
+        instructionsState = 'hidden';
+    }
+    else {
+        $('#instructions-text').slideDown({
+            duration: 400,
+            queue: false,
+            complete: function(){
+            if (p1 < $('#secondary-toolbar').outerHeight(true) + $('#toolbar-main').outerHeight(true) ){
+                startChunkHeight();
+            }
+        }});
         instructionsState = 'visible';
     }
 
