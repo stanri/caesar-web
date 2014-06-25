@@ -129,8 +129,6 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         if datetime.datetime.now() <= milestone.duedate + datetime.timedelta(days=extension_days) + datetime.timedelta(hours=2):
             current_milestone_data.append((milestone, user_extension))
 
-
-
     return render(request, 'dashboard/dashboard.html', {
         'active_tasks': active_tasks,
         'completed_tasks': completed_tasks,
@@ -141,3 +139,5 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         'current_milestone_data': current_milestone_data,
         'allow_requesting_more_tasks': allow_requesting_more_tasks,
     })
+
+
