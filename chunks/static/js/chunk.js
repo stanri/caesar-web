@@ -726,7 +726,7 @@ $('#toggle-instructions-button').click(function() {
             if (p1 < $('#secondary-toolbar').outerHeight(true) + $('#toolbar-main').outerHeight(true) ){
                 startChunkHeight();
             }
-        })
+        });
         instructionsState = 'visible';
     }
 
