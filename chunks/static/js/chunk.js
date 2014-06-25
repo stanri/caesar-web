@@ -594,6 +594,7 @@ if (caesar.state.fullView) {
 
 $('#new-comment-form').live('submit', function() {
     var dataString = $(this).serialize();
+    console.log(dataString);
     $.post(caesar.urls.new_comment, dataString, function(data) {
         var newNode = $(data);
         $('.new-comment').replaceWith(newNode);
