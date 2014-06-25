@@ -92,7 +92,7 @@ $(document).ready(function() {
 </div>
 
 <table class="current-assignment">
-  {% for milestone, extension in current_milestone_data %}
+  {% for (milestone, extension) in current_milestone_data %}
   <tr class="assignment-line">
     <td class="black-text"> {{ milestone.full_name }} </td>
     <td class="grey-text"> Due on: {{ milestone.duedate|date:"D, N d, Y, P" }} 
