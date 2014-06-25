@@ -32,30 +32,20 @@
 
 <script>
 function startChunkHeight(){
-
-//    var start1 = $(div1).offset().top;
-//    var start2=$(div2).offset().top;
-//
-//    $.event.add(window, "scroll", function() {
-//        var p1 = $(window).scrollTop();
-//        $(div1).css('position',((p1)>0) ? 'fixed' : 'static');
-//        $(div1).css('top',((p1)>0) ? '0px' : '');
-//
-//        var p2 = $(window).scrollTop();
-//        $(div2).css('position',((p2)>start2) ? 'fixed' : 'static');
-//        $(div2).css('top',((p2)>start2) ? '0px' : '');
-//    });
-
+    var duration = 400; //in milliseconds
     var bottom = $('#secondary-toolbar').position().top + $('#secondary-toolbar').outerHeight(true); //the bottom of the secondary toolbar is its position at top plus the height of it, including margins.
-    $('#chunk-display').css('top', bottom);
-     $('#comment-display').css('top', bottom);
-    $('#view-all-code').css('top', bottom);
+//    $('#chunk-display').css('top', bottom);
+//    $('#comment-display').css('top', bottom);
+//    $('#view-all-code').css('top', bottom);
+    $('#chunk-display').animate({ top: bottom,}, {duration: duration, queue: false} );
+    $('#comment-display').animate({ top: bottom,}, {duration: duration, queue: false} );
+    $('#view-all-code').animate({ top: bottom,}, {duration: duration, queue: false} );
+
 }
 
 
 $(document).ready(function(){
     $('#comment-display').css('position', 'relative');
-    //var p1 = $(window).scrollTop();
     var div1 = $('#toolbar-main');
     var div2 = $('#secondary-toolbar');
     $(div1).css('position','fixed');
