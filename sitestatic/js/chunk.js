@@ -315,6 +315,7 @@ function drawCommentMarker(comment) {
               $.each(model.comments, function(index, innerComment) {
                   if (innerComment.start == comment.start) {
                       $(innerComment.elt).effect('highlight', {}, 2000);
+                      expandComment(innerComment);
                   }
               });
           });

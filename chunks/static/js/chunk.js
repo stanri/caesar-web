@@ -314,6 +314,7 @@ function drawCommentMarker(comment) {
               checkIfSpecial(comment);
               $.each(model.comments, function(index, innerComment) {
                   if (innerComment.start == comment.start) {
+                      expandComment(innerComment);
                       $(innerComment.elt).effect('highlight', {}, 2000);
                   }
               });
