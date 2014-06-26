@@ -29,7 +29,6 @@ def dashboard(request):
     live_review_milestones = ReviewMilestone.objects.filter(assigned_date__lt=datetime.datetime.now(),\
          duedate__gt=datetime.datetime.now(), assignment__semester__members__user=user).all()
     for review_milestone in live_review_milestones:
-        #logging.debug("live reviewing milestone: " + review_milestone)
         current_tasks = user.tasks.filter(milestone=review_milestone)
         active_sub = Submission.objects.filter(authors=user, milestone=review_milestone.submit_milestone)
         try:
@@ -81,6 +80,10 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         .order_by('completed').reverse()
     completed_tasks = annotate_tasks_with_counts(completed_tasks)
 
+    '''
+    Gathers data from submissions of a user, including comments and number of reviewers on those submissions.
+    @attr - submissions - QuerySet of submissions that the author users.
+    '''
     def collect_submission_data(submissions):
         data = []
         for submission in submissions:
@@ -90,6 +93,19 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
             data.append((submission, reviewer_count, submission.last_modified,
                                       user_comments, static_comments))
         return data
+
+    '''
+    Returns a list of comments (NOT A LIST OF LISTS) for all submissions of a user.
+    @param - submissions - QuerySet of submissions that the author users.
+    '''
+    def collect_comments_from_submissions(submissions):
+        all_comments = []
+        for submission in submissions:
+            user_comments = Comment.objects.filter(chunk__file__submission=submission).filter(type='U')
+            for comment in user_comments:
+                all_comments.append(comment)
+        #all_comments need to be sorted by created date
+        return all_comments
 
     #get all the submissions that the user submitted
     submissions = Submission.objects.filter(authors=dashboard_user) \
@@ -101,6 +117,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         .reverse()
 
     submission_data = collect_submission_data(submissions)
+    submission_comments = collect_comments_from_submissions(submissions)
 
     #get all the submissions that the user submitted, in previous semesters
     old_submissions = Submission.objects.filter(authors=dashboard_user) \
@@ -138,6 +155,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         'old_submission_data': old_submission_data,
         'current_milestone_data': current_milestone_data,
         'allow_requesting_more_tasks': allow_requesting_more_tasks,
+        'submission_comments': submission_comments,
     })
 
 
