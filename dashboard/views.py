@@ -39,7 +39,7 @@ def dashboard(request):
                 # user is a student with an existing submission, or isn't a student
                 # allow user to request more tasks manually
                 allow_requesting_more_tasks = True
-                if not current_tasks.count(): 
+                if not current_tasks.count():
                     # automatically assign new tasks to student ONLY if they don't already have tasks
                     #logging.debug("assigning tasks")
                     new_task_count += assign_tasks(review_milestone, user)
