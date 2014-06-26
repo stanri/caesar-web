@@ -9,6 +9,10 @@
     font-size: 1em;
 }
 
+#page-content {
+    margin: inherit;
+}
+
 #view-all-code {
     display: block;
     float: right;

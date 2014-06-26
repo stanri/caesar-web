@@ -34,12 +34,8 @@
 function startChunkHeight(){
     var duration = 400; //in milliseconds
     var bottom = $('#secondary-toolbar').position().top + $('#secondary-toolbar').outerHeight(true); //the bottom of the secondary toolbar is its position at top plus the height of it, including margins.
-//    $('#chunk-display').css('top', bottom);
-//    $('#comment-display').css('top', bottom);
-//    $('#view-all-code').css('top', bottom);
-    $('#chunk-display').animate({ top: bottom,}, {duration: duration, queue: false} );
-    $('#comment-display').animate({ top: bottom,}, {duration: duration, queue: false} );
-    $('#view-all-code').animate({ top: bottom,}, {duration: duration, queue: false} );
+
+    $('#page-content').css('margin-top', bottom);
 
 }
 
@@ -52,11 +48,6 @@ $(document).ready(function(){
     $(div1).css('top','0px');
     $(div2).css('position', 'fixed');
     $(div2).css('top', '29px');
-    var bottom = $('#secondary-toolbar').position().top + $('#secondary-toolbar').outerHeight(true);
-
-    $('#view-all-code').css('top', bottom);
-    $('#view-all-code').css('position', 'relative');
-
     startChunkHeight();
 })
 
@@ -163,38 +154,40 @@ $(document).ready(function(){
     </h3>
 </div>
 {% endcomment %}
-<div id ="view-all-code">
-    <a href="{% url 'chunks.views.view_all_chunks' 'code' chunk.file.submission.id %}">
-      view all code
-    </a>
-</div>
-<br/>
-<div id="comment-display" class="span-6">
-  <div style="mid-width:30em" id="comment-display-inner" class="file-{{file.id}} files">
-     {% for comment, vote, snippet in comment_data %}
-       {% include "review/comment.html" %}
-     {% endfor %}
-  </div>
-</div>
+<div id="page-content"> <!-- as in, content below the -->
+    <div id ="view-all-code">
+        <a href="{% url 'chunks.views.view_all_chunks' 'code' chunk.file.submission.id %}">
+          view all code
+        </a>
+    </div>
+    <br/>
+    <div id="comment-display" class="span-6">
+      <div style="mid-width:30em" id="comment-display-inner" class="file-{{file.id}} files">
+         {% for comment, vote, snippet in comment_data %}
+           {% include "review/comment.html" %}
+         {% endfor %}
+      </div>
+    </div>
 
-<div id="chunk-display" class="span-18 last">
-  <div class="syntax">
-  {% for n, line, staff_code in highlighted_lines %}
-  {% if not staff_code %}
-  <span id="chunk-{{chunk.id}}-line-{{ n }}" class="chunk-line chunk-line-student">
-    <span id="line-{{chunk.id}}-{{ n }}-{{file.id}}" class="line">
-      <span class="line-number">{{ n }}</span><pre class="line-code">{{ line|safe }}</pre>
-    </span>
-  </span>
-  {% else %}
-  <span id="chunk-{{chunk.id}}-line-{{ n }}" class="chunk-line chunk-line-staff">
-    <span id="line-{{chunk.id}}-{{ n }}-{{file.id}}" class="line">
-      <span class="line-number">{{ n }}</span><pre class="line-code">{{ line|safe }}</pre>
-    </span>
-  </span>
-  {% endif %}
-  {% endfor %}
-  </div>
+    <div id="chunk-display" class="span-18 last">
+      <div class="syntax">
+      {% for n, line, staff_code in highlighted_lines %}
+      {% if not staff_code %}
+      <span id="chunk-{{chunk.id}}-line-{{ n }}" class="chunk-line chunk-line-student">
+        <span id="line-{{chunk.id}}-{{ n }}-{{file.id}}" class="line">
+          <span class="line-number">{{ n }}</span><pre class="line-code">{{ line|safe }}</pre>
+        </span>
+      </span>
+      {% else %}
+      <span id="chunk-{{chunk.id}}-line-{{ n }}" class="chunk-line chunk-line-staff">
+        <span id="line-{{chunk.id}}-{{ n }}-{{file.id}}" class="line">
+          <span class="line-number">{{ n }}</span><pre class="line-code">{{ line|safe }}</pre>
+        </span>
+      </span>
+      {% endif %}
+      {% endfor %}
+      </div>
+    </div>
 </div>
 {% endblock %}
 
