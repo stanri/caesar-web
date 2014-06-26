@@ -34,6 +34,7 @@ class Notification(models.Model):
     reason = models.CharField(max_length=1, blank=True, choices=REASON_CHOICES)
     created = models.DateTimeField(auto_now_add=True)
     email_sent = models.BooleanField(default=False)
+    seen = models.BooleanField(default=False)
 
     class Meta:
         ordering = [ '-created' ]
