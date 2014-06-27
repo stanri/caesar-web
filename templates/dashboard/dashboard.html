@@ -98,14 +98,26 @@ $(document).ready(function() {
 </div>
 
 <div class='span12 current-assignments'>
+
 <div class="assignment-header">
     <h2 class="task-header">upcoming assignments</h2>
+</div>
+
+<div class="slack-data">
+  {% for semester, slack_left in current_slack_data %}
+    <div class="semester-slack">
+      <h4> <b>{{ semester.subject.name }}</b> {{semester.semester}}: </h4>
+      <h4> {{slack_left}} slack days left </h4>
+    </div>
+  {% empty %}
+      <div> You have no active classes </div>
+  {% endfor %}
 </div>
 
 <table class="current-assignment">
   {% for milestone, extension in current_milestone_data %}
   <tr class="assignment-line">
-    <td class="black-text"> {{ milestone.full_name }} </td>
+    <td class="black-text"> {<{ milestone.full_name }} </td>
     <td class="grey-text"> Due on: {{ milestone.duedate|date:"D, N d, Y, P" }}
         {%if extension %}
           <span class="red-text"> </br> Extended to: {{extension.new_duedate|date:"D, N d, Y, P"}} </span>
