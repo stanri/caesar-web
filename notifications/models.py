@@ -30,6 +30,7 @@ class Notification(models.Model):
 
     submission = models.ForeignKey(Submission, blank=True, null=True, related_name='notifications')
     comment = models.ForeignKey(Comment, blank=True, null=True, related_name='notifications')
+    vote = models.ForeignKey(Vote, blank=True, null=True, related_name='notifications')
     recipient = models.ForeignKey(User, related_name='notifications')
     reason = models.CharField(max_length=1, blank=True, choices=REASON_CHOICES)
     created = models.DateTimeField(auto_now_add=True)
