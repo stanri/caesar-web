@@ -27,7 +27,7 @@ $(document).ready(function() {
         textIndex = 1 - textIndex;
         $(this).text(toggleInstructionsText[textIndex]);
     });
-    
+
     $('#historic_content').hide();
     var toggleTaskText = [ 'hide previous semesters', 'show previous semesters' ];
     var taskIndex = 1;
@@ -37,7 +37,7 @@ $(document).ready(function() {
         $(this).text(toggleTaskText[taskIndex]);
         $(".empty").remove();
     });
-    
+
     var toggleSemesterText = [ 'hide previous semesters', 'show previous semesters' ];
     var semesterIndex = 1;
     $('#historic-submissions').hide();
@@ -57,12 +57,12 @@ $(document).ready(function() {
             $('.result').append('<div class="success">You have '+data.total +' new review tasks.</div>');
             $('.task-empty').hide();
             $('#new-task-list').append('<div id=task-'
-            + data.one.task_id + '-' + data.one.task_chunk_id + ' class="task-line new"> <span class="chunk-name">' 
+            + data.one.task_id + '-' + data.one.task_chunk_id + ' class="task-line new"> <span class="chunk-name">'
             + data.one.task_chunk_name + '</span><span class="task-stats"><span class="comment-count" title="Comments">' + data.one.task_comment_count + '</span><span class="reviewer-count" title="Reviewers">' + data.one.task_reviewer_count + '</span></span><span class="task-snippet">'+ data.one.task_chunk_generate_snippet + '</span></div>');
             $('#new-task-list').append('<div id=task-'
-            + data.two.task_id + '-' + data.two.task_chunk_id +' class="task-line new"> <span class="chunk-name">' 
+            + data.two.task_id + '-' + data.two.task_chunk_id +' class="task-line new"> <span class="chunk-name">'
             + data.two.task_chunk_name + '</span><span class="task-stats"><span class="comment-count" title="Comments">' + data.two.task_comment_count + '</span><span class="reviewer-count" title="Reviewers">' + data.two.task_reviewer_count + '</span></span><span class="task-snippet">'+ data.two.task_chunk_generate_snippet + '</span></div>');
-            
+
             $('.task-line').click(function(e) {
               window.location = $(this).attr("data-href")
               return false;
@@ -86,6 +86,17 @@ $(document).ready(function() {
 {% block content %}
 
 <div class='row'>
+
+<div class='span12 recent-activity'>
+    <h2 class='recent-activity-header'>recent activity</h2>
+    <table class="recent-stream">
+        {% if notification.seen == False %}
+            <div>{{notification.comment}}</div>
+        {% endif %}
+    </table>
+    
+</div>
+
 <div class='span12 current-assignments'>
 <div class="assignment-header">
     <h2 class="task-header">upcoming assignments</h2>
@@ -95,7 +106,7 @@ $(document).ready(function() {
   {% for milestone, extension in current_milestone_data %}
   <tr class="assignment-line">
     <td class="black-text"> {{ milestone.full_name }} </td>
-    <td class="grey-text"> Due on: {{ milestone.duedate|date:"D, N d, Y, P" }} 
+    <td class="grey-text"> Due on: {{ milestone.duedate|date:"D, N d, Y, P" }}
         {%if extension %}
           <span class="red-text"> </br> Extended to: {{extension.new_duedate|date:"D, N d, Y, P"}} </span>
         {% endif %}
@@ -116,7 +127,7 @@ $(document).ready(function() {
 <h2 class="task-header">submitted assignments</h2>
 <div>
   {% for submission, reviewer_count, last_modified, user_comments, static_comments in submission_data %}
-  
+
   <div id ="submission-{{submission.id}}" class="submission-line">
     <span class="chunk-name">
       {{ submission.milestone.full_name }}
@@ -143,7 +154,7 @@ $(document).ready(function() {
     <div class="history-submissions"> show previous semesters </div>
     <div id="historic-submissions" class="task-list">
       {% for submission, reviewer_count, last_modified, user_comments, static_comments in old_submission_data %}
-  
+
       <div id ="submission-{{submission.id}}" class="submission-line">
         <span class="chunk-name">
           {{ submission.milestone.full_name }}
@@ -183,10 +194,10 @@ $(document).ready(function() {
       {% include "dashboard/task.html" %}
     {% empty %}
        <div class="task-empty">
-            No tasks left. If you haven't already, please fill out 
-            our <a href="https://spreadsheets.google.com/spreadsheet/viewform?formkey=dGNyMlRVTGNTbXFZazA5bDRPd25sZFE6MQ" target="_blank">feedback survey</a>. 
-            {%if allow_requesting_more_tasks %} 
-              Or <button id="more_work" type="button">Get more tasks!</button> 
+            No tasks left. If you haven't already, please fill out
+            our <a href="https://spreadsheets.google.com/spreadsheet/viewform?formkey=dGNyMlRVTGNTbXFZazA5bDRPd25sZFE6MQ" target="_blank">feedback survey</a>.
+            {%if allow_requesting_more_tasks %}
+              Or <button id="more_work" type="button">Get more tasks!</button>
               <span id="progress"><img src="{{ STATIC_URL }}img/progress.gif"/></span>
             {% endif%}
        </div>
@@ -207,17 +218,17 @@ $(document).ready(function() {
   </div>
   {% if old_completed_tasks.all %}
       <div class="history"> show previous semesters </div>
-      	<div id="historic_content">
-      		<div class="task-list">
-        	{% for task in old_completed_tasks.all %}
-        	   {% include "dashboard/task.html" %}
-        		{% empty %}
-        			No tasks found.
-        	{% endfor %}
+        <div id="historic_content">
+          <div class="task-list">
+          {% for task in old_completed_tasks.all %}
+             {% include "dashboard/task.html" %}
+            {% empty %}
+              No tasks found.
+          {% endfor %}
       </div>
       </div>
   {% endif %}
-  	</div>
+    </div>
 </div>
 
 </div>

@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from  django.core.exceptions import ObjectDoesNotExist
 
 from chunks.models import Chunk, Assignment, Milestone, SubmitMilestone, ReviewMilestone, Submission, StaffMarker
-from review.models import Comment
+from review.models import Comment, Vote
 from tasks.models import Task
 from tasks.routing import assign_tasks
 from accounts.models import UserProfile, Extension, Member
@@ -29,7 +29,6 @@ def dashboard(request):
     live_review_milestones = ReviewMilestone.objects.filter(assigned_date__lt=datetime.datetime.now(),\
          duedate__gt=datetime.datetime.now(), assignment__semester__members__user=user).all()
     for review_milestone in live_review_milestones:
-        #logging.debug("live reviewing milestone: " + review_milestone)
         current_tasks = user.tasks.filter(milestone=review_milestone)
         active_sub = Submission.objects.filter(authors=user, milestone=review_milestone.submit_milestone)
         try:
@@ -39,7 +38,7 @@ def dashboard(request):
                 # user is a student with an existing submission, or isn't a student
                 # allow user to request more tasks manually
                 allow_requesting_more_tasks = True
-                if not current_tasks.count(): 
+                if not current_tasks.count():
                     # automatically assign new tasks to student ONLY if they don't already have tasks
                     #logging.debug("assigning tasks")
                     new_task_count += assign_tasks(review_milestone, user)
@@ -81,6 +80,10 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         .order_by('completed').reverse()
     completed_tasks = annotate_tasks_with_counts(completed_tasks)
 
+    '''
+    Gathers data from submissions of a user, including comments and number of reviewers on those submissions.
+    @attr - submissions - QuerySet of submissions.
+    '''
     def collect_submission_data(submissions):
         data = []
         for submission in submissions:
@@ -91,6 +94,97 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
                                       user_comments, static_comments))
         return data
 
+    '''
+    Returns a list of tuples in the form (user-generated comment, comment creation time, list_as_reply=False)
+    (NOT A LIST OF LISTS) for all submissions of a user. The first entry in the list is the earliest comment,
+    and the last entry is the latest comment.
+    Note to dev: list_as_reply is used for icons in the template, since the sorting method
+    will lose track of what comments are replies to users code, not necessarily on one of their own submissions.
+    @param - submissions - QuerySet of submissions.
+    '''
+    def collect_comments_from_submissions(submissions):
+        all_comments = []
+        for submission in submissions:
+            user_code_comments = Comment.objects.filter(chunk__file__submission=submission).filter(type='U')
+            for comment in user_code_comments:  #this is done to have a list of comments instead of a list of lists.
+                all_comments.append((comment, comment.created, False))
+        return all_comments
+
+#   Code below is for the notifications version of this method.
+#    def collect_comments_from_submissions(submissions):
+#        all_notifications = []
+#        for submission in submissions:
+#            user_submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='C')
+#            for notification in user_submission_notifications:  #this is done to have a list of comments instead of a list of lists.
+#                all_notifications.append((notification, notification.created, notification.reason))
+#        return all_notifications
+
+    '''
+    Returns a list of tuples in the form of (reply, reply.created, list_as_reply=True) where reply is a comment that is a child
+    to a parent comment created by the dashboard user.
+    @param - submissions - QuerySet of submissions.
+    '''
+    def collect_replies_to_user(submissions):
+        replies = []
+        for submission in submissions:
+            submission_comments = Comment.objects.filter(chunk__file__submission=submission).filter(type='U')
+            for comment in submission_comments:
+                if comment.parent is not None:
+                    if comment.parent.author == dashboard_user:
+                        #NOTE: remember to use the version with this being True if a duplicate appears
+                        replies.append((comment, comment.created, True))
+        return replies
+
+#   Code below is for the notifications version of this method.
+#    def collect_replies_to_user(submissions):
+#        replies = []
+#        for submission in submissions:
+#            submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='R')
+#            for notification in submission_notifications:
+#                if notification.comment.parent is not None:
+#                    if notification.comment.parent.author == dashboard_user:
+#                        replies.append((notification, notification.created, notification.reason))
+#        return replies
+
+    '''
+    Returns a list of comments with recent vote activity, with the comment with the most recent
+    vote activity at the end of the list.
+    @param - submisssions - QuerySet of submissions.
+    '''
+    def collect_recent_votes():
+        votes_tuple_list = []
+        votes_on_user = Vote.objects.filter(comment__author=dashboard_user)
+        for vote in votes_on_user:
+            votes_tuple_list.append((vote, vote.modified))
+        return votes_tuple_list
+
+    '''
+    Returns a sorted list all of the list arguments by their time of modification or creation, depending on the object,
+    where the 0 index is used for the earliest action. (votes use modification time, comments use creation time)
+    @param comments_list - list generated from collect_comments_from_submissions
+    @param replies_list - list generated from collect_replies_to_user
+    @param comments_from_vote_list - list generated from collect_recent_votes
+    '''
+    def create_recent_activity_list(comments_list, replies_list, votes_list):
+        list_of_lists = [comments_list, replies_list, votes_list]
+
+        #list comp. flattens list_of_lists
+        #(see http://stackoverflow.com/questions/716477/join-list-of-lists-in-python)
+        recent_activity_tuple = [inner for outer in list_of_lists for inner in outer]
+
+        #sorts the list by the time entry in the second position of each tuple.
+        recent_activity_tuple.sort(key = lambda object_time_tuple: object_time_tuple[1])
+
+        #recent_activity contains 'Comment tuples' and Vote objects, where the last item is the
+        #most recent item that should appear at the top in recent activity in the template.
+        #Comment tuples are tuples in form (Comment, boolean), where the boolean will be
+        #read in the template to decide if the comment is a reply to a user comment
+        #or a comment on a users submission.
+        #(if len(i) < 3, it's a vote object, so just gather the vote itself.)
+        recent_activity = [i[0] if len(i) < 3 else (i[0], i[2]) for i in recent_activity_tuple]
+        return recent_activity
+
+
     #get all the submissions that the user submitted
     submissions = Submission.objects.filter(authors=dashboard_user) \
         .filter(milestone__duedate__lt=datetime.datetime.now()) \
@@ -100,7 +194,14 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         .annotate(last_modified=Max('files__chunks__comments__modified'))\
         .reverse()
 
+    all_submissions = Submission.objects.all()
+
     submission_data = collect_submission_data(submissions)
+    #TODO: make sure this isn't too time intensive.
+    submission_comments = collect_comments_from_submissions(submissions) #TODO: maybe expand this into old_submission_data too
+    submission_replies = collect_replies_to_user(all_submissions)
+    submission_voted_recently = collect_recent_votes()
+    recent_activity_objects = create_recent_activity_list(submission_comments, submission_replies, submission_voted_recently)
 
     #get all the submissions that the user submitted, in previous semesters
     old_submissions = Submission.objects.filter(authors=dashboard_user) \
@@ -138,6 +239,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         'old_submission_data': old_submission_data,
         'current_milestone_data': current_milestone_data,
         'allow_requesting_more_tasks': allow_requesting_more_tasks,
+        'recent_activity_objects': recent_activity_objects,
     })
 
 
