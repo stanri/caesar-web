@@ -100,14 +100,13 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
 #        'comment': instance,
 #        'chunk': instance.chunk,
 #        'submission': instance.chunk.file.submission
-#        'submission_author': instance.chunk.file.submission.authors.all() #this is a list of User objects!
+#        'submission_authors': instance.chunk.file.submission.authors.all()
 #        })
         notified_users = set()
         site = Site.objects.get_current()
         chunk = instance.chunk
         submission = instance.chunk.file.submission
-        submission_authors = instance.chunk.file.submission.authors.all()
-
+        submission_authors = instance.chunk.file.submission.authors.all() #this is a list of User objects!
 
         #if the comment has a reply and the reply is not from the person who made the comment.
         #create a second variable to crawl up the reply tree for correct notification alerts.
@@ -130,12 +129,25 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
                     notification.comment = instance
                     notification.save()
                     notified_users.add(author)
-        
+
         #send the other users that have commented on the code in the past a notification
         #with reason='A'
-        for comment in chunk.
 
+        #list of all users who submitted or have commented on the code
+        #TODO: make related_users a set and find a way to extend it by submission_authors
+        #we want a set for performance, since duplicates are taken care of by the notified_users.add(user)
+        #call in the for loop below.
 
+        related_users = [comment.author for comment in chunk.comments.all()]
+        related_users.extend(submission_authors)
+
+        for user in related_users:
+            if user not in notified_users:
+                notification = Notification(recipient = user, reason='A')
+                notification.submission = submission
+                notification.comment = instance
+                notification.save()
+                notified_users.add(user)
 
 #Note: This method was used to send emails when people got a reply to a comment
 #they made, but the email functionality was scrapped and the code basically created
