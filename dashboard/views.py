@@ -120,7 +120,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         for submission in submissions:
             submission_comments = Comment.objects.filter(chunk__file__submission=submission).filter(type='U')
             for comment in submission_comments:
-                if comment.parent.author == dashboard_user:
+                if "what" == dashboard_user:
                     #NOTE: remember to use the version with this being True if a duplicate appears
                     replies.append((comment, comment.created, True))
         return replies
