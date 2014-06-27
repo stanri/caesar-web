@@ -90,9 +90,13 @@ $(document).ready(function() {
 <div class='span12 recent-activity'>
     <h2 class='recent-activity-header'>recent activity</h2>
     <table class="recent-stream">
-        {% if notification.seen == False %}
-            <div>{{notification.comment}}</div>
-        {% endif %}
+        {% for note in notifictaions %}
+            <tr class="notification-{{note.seen}}">
+            {% if notifications.seen == False %}
+                <td>{{notification.comment}}</td>
+            {% endif %}
+            </tr>
+        {% endfor %}
     </table>
     
 </div>
