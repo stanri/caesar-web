@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from  django.core.exceptions import ObjectDoesNotExist
 
 from chunks.models import Chunk, Assignment, Milestone, SubmitMilestone, ReviewMilestone, Submission, StaffMarker
-from review.models import Comment
+from review.models import Comment, Vote
 from tasks.models import Task
 from tasks.routing import assign_tasks
 from accounts.models import UserProfile, Extension, Member
@@ -120,9 +120,10 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         for submission in submissions:
             submission_comments = Comment.objects.filter(chunk__file__submission=submission).filter(type='U')
             for comment in submission_comments:
-                if "what" == dashboard_user:
-                    #NOTE: remember to use the version with this being True if a duplicate appears
-                    replies.append((comment, comment.created, True))
+                if comment.parent is not None:
+                    if comment.parent.author == dashboard_user:
+                        #NOTE: remember to use the version with this being True if a duplicate appears
+                        replies.append((comment, comment.created, True))
         return replies
 
     '''
@@ -130,13 +131,12 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
     vote activity at the end of the list.
     @param - submisssions - QuerySet of submissions.
     '''
-    def collect_recent_votes(submissions):
-        comments = []
-        for submission in submissions:
-            submission_votes = Votes.objects.filter(comment.author==dashboard.user)
-            for vote in submission_votes:
-                comments.append((vote, vote.modified))
-        return comments
+    def collect_recent_votes():
+        votes_tuple_list = []
+        votes_on_user = Vote.objects.filter(comment__author=dashboard_user)
+        for vote in votes_on_user:
+            votes_tuple_list.append((vote, vote.modified))
+        return votes_tuple_list
 
     '''
     Returns a sorted list all of the list arguments by their time of modification or creation, depending on the object,
@@ -180,7 +180,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
     #TODO: make sure this isn't too time intensive.
     submission_comments = collect_comments_from_submissions(submissions) #TODO: maybe expand this into old_submission_data too
     submission_replies = collect_replies_to_user(all_submissions)
-    submission_voted_recently = collect_recent_votes(all_submissions)
+    submission_voted_recently = collect_recent_votes()
     recent_activity_objects = create_recent_activity_list(submission_comments, submission_replies, submission_voted_recently)
 
     #get all the submissions that the user submitted, in previous semesters
