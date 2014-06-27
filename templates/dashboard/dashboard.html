@@ -86,14 +86,27 @@ $(document).ready(function() {
 {% block content %}
 
 <div class='row'>
-
 <div class='span12 recent-activity'>
     <h2 class='recent-activity-header'>recent activity</h2>
     <table class="recent-stream">
-        {% for note in notifictaions %}
-            <tr class="notification-{{note.seen}}">
-            {% if notifications.seen == False %}
-                <td>{{notification.comment}}</td>
+        {% for notification in recent_activity_objects %}
+            <tr class="notification-{{notification.seen}}">
+            {% if notification.seen == False %}
+                <td class="note-activity">
+                    {% if notification.reason == "C" %}
+                        <span>{{notification.sender}} commented on your code!</span>
+                    {% endif %}
+                    {% if notification.reason == "R" %}
+                        <span>{{notification.sender}} replied to your comment!<span>
+                    {% endif %}
+                    {% if notification.reason == "V" %}
+                        <span>Someone voted on your code!</span>
+                    {% endif %}
+                    {% if notification.reason == "A" %}
+                        <span>There is activity on {{notification.recipient}}'s code!</span>
+                    {% endif %}
+                </td>
+                <td class="notification-content">{{notification.comment}}</td>
             {% endif %}
             </tr>
         {% endfor %}
@@ -102,26 +115,14 @@ $(document).ready(function() {
 </div>
 
 <div class='span12 current-assignments'>
-
 <div class="assignment-header">
     <h2 class="task-header">upcoming assignments</h2>
-</div>
-
-<div class="slack-data">
-  {% for semester, slack_left in current_slack_data %}
-    <div class="semester-slack">
-      <h4> <b>{{ semester.subject.name }}</b> {{semester.semester}}: </h4>
-      <h4> {{slack_left}} slack days left </h4>
-    </div>
-  {% empty %}
-      <div> You have no active classes </div>
-  {% endfor %}
 </div>
 
 <table class="current-assignment">
   {% for milestone, extension in current_milestone_data %}
   <tr class="assignment-line">
-    <td class="black-text"> {<{ milestone.full_name }} </td>
+    <td class="black-text"> {{ milestone.full_name }} </td>
     <td class="grey-text"> Due on: {{ milestone.duedate|date:"D, N d, Y, P" }}
         {%if extension %}
           <span class="red-text"> </br> Extended to: {{extension.new_duedate|date:"D, N d, Y, P"}} </span>
@@ -138,9 +139,10 @@ $(document).ready(function() {
 </table>
 </div>
 
-{% if submission_data or old_submission_data %}
+<!--{% if submission_data or old_submission_data %}-->
 <div class='span12 submitted-assignments'>
 <h2 class="task-header">submitted assignments</h2>
+<button class="solo-submit"></button>
 <div>
   {% for submission, reviewer_count, last_modified, user_comments, static_comments in submission_data %}
 
@@ -195,7 +197,9 @@ $(document).ready(function() {
     </div>
 {% endif %}
 </div>
-{% endif %}
+<!--{% endif %}-->
+
+<br>
 
 <div class='span12 to-review'>
   <div class="result"></div>
