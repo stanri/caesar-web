@@ -82,7 +82,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
 
     '''
     Gathers data from submissions of a user, including comments and number of reviewers on those submissions.
-    @attr - submissions - QuerySet of submissions by the user.
+    @attr - submissions - QuerySet of submissions.
     '''
     def collect_submission_data(submissions):
         data = []
@@ -95,73 +95,74 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         return data
 
     '''
-    Returns a list of user-generated comments (NOT A LIST OF LISTS) for all submissions of a user,
-    sorted by their date of creation. The first entry in the list is the earliest comment, and the last
-    entry is the latest comment.
-    @param - submissions - QuerySet of submissions by the user.
+    Returns a list of tuples in the form (user-generated comment, comment creation time, list_as_reply=False)
+    (NOT A LIST OF LISTS) for all submissions of a user. The first entry in the list is the earliest comment,
+    and the last entry is the latest comment.
+    Note to dev: list_as_reply is used for icons in the template, since the sorting method
+    will lose track of what comments are replies to users code, not necessarily on one of their own submissions.
+    @param - submissions - QuerySet of submissions.
     '''
     def collect_comments_from_submissions(submissions):
         all_comments = []
         for submission in submissions:
             user_code_comments = Comment.objects.filter(chunk__file__submission=submission).filter(type='U')
             for comment in user_code_comments:  #this is done to have a list of comments instead of a list of lists.
-                all_comments.append(comment)
-        all_comments.sort(key = lambda comment: comment.created) #all_comments[0] is the earliest comment, last index is latest.
+                all_comments.append((comment, comment.created, False))
         return all_comments
 
     '''
-    Returns a list of replies to the users comments, which are themselves comments.
-    @param - submissions - QuerySet of submissions by the user.
+    Returns a list of tuples in the form of (reply, reply.created, list_as_reply=True) where reply is a comment that is a child
+    to a parent comment created by the dashboard user.
+    @param - submissions - QuerySet of submissions.
     '''
-    #TODO: this need to be run on a set of submissions where the user is a comment author.
     def collect_replies_to_user(submissions):
         replies = []
         for submission in submissions:
-            user_code_comments = Comment.objects.filter(chunk__file__submission=submission).filter(type='U')
-            for comment in user_code_comments:
+            submission_comments = Comment.objects.filter(chunk__file__submission=submission).filter(type='U')
+            for comment in submission_comments:
                 if comment.parent.author == dashboard_user:
-                    replies.append(reply)
-        replies.sort(key = lambda reply: reply.created)
+                    #NOTE: remember to use the version with this being True if a duplicate appears
+                    replies.append((comment, comment.created, True))
         return replies
 
     '''
     Returns a list of comments with recent vote activity, with the comment with the most recent
     vote activity at the end of the list.
-    @param - submisssions - QuerySet of submissions by the user.
+    @param - submisssions - QuerySet of submissions.
     '''
-    def collect_recently_voted_comments(submissions):
-        all_votes = []
+    def collect_recent_votes(submissions):
         comments = []
         for submission in submissions:
             submission_votes = Votes.objects.filter(comment.author==dashboard.user)
             for vote in submission_votes:
-                all_votes.append(vote)
-        all_votes.sort(key = lambda vote: vote.modified)
-        for vote in all_votes:
-            comments.append(vote.comment)
-        #ISSUE: vote.modified time is lost by doing this...
-        #IDEA: store things in all 3 methods in form of (vote or comment, time) tuples,
-        #and sort by the time in the tuple, then return the sorted list of just the
-        #first elements in the sort_recent_activity_list method below.
+                comments.append((vote, vote.modified))
         return comments
 
     '''
-    Sorts all of the list arguments by their time of modification, where the 0 index is used for the earliest
-    action.
+    Returns a sorted list all of the list arguments by their time of modification or creation, depending on the object,
+    where the 0 index is used for the earliest action. (votes use modification time, comments use creation time)
     @param comments_list - list generated from collect_comments_from_submissions
     @param replies_list - list generated from collect_replies_to_user
-    @param comments_from_vote_list - list generated from collect_recently_voted_comments
+    @param comments_from_vote_list - list generated from collect_recent_votes
     '''
-    def sort_recent_activity_list(comments_list, replies_list, comments_from_vote_list):
-        list_of_lists = [comments_list, replies_list, comments_from_vote_list]
+    def create_recent_activity_list(comments_list, replies_list, votes_list):
+        list_of_lists = [comments_list, replies_list, votes_list]
 
         #list comp. flattens list_of_lists
         #(see http://stackoverflow.com/questions/716477/join-list-of-lists-in-python)
-        recent_activity = [inner for outer in list_of_lists for inner in outer]
-        #TODO: problem with sort: can i sort by type? I need to use modified for vote and
-        #created for reply and submission.
-#        recent_activity.sort(key = lambda x: x.created)
+        recent_activity_tuple = [inner for outer in list_of_lists for inner in outer]
 
+        #sorts the list by the time entry in the second position of each tuple.
+        recent_activity_tuple.sort(key = lambda object_time_tuple: object_time_tuple[1])
+
+        #recent_activity contains 'Comment tuples' and Vote objects, where the last item is the
+        #most recent item that should appear at the top in recent activity in the template.
+        #Comment tuples are tuples in form (Comment, boolean), where the boolean will be
+        #read in the template to decide if the comment is a reply to a user comment
+        #or a comment on a users submission.
+        #(if len(i) < 3, it's a vote object, so just gather the vote itself.)
+        recent_activity = [i[0] if len(i) < 3 else (i[0], i[2]) for i in recent_activity_tuple]
+        return recent_activity
 
 
     #get all the submissions that the user submitted
@@ -179,7 +180,8 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
     #TODO: make sure this isn't too time intensive.
     submission_comments = collect_comments_from_submissions(submissions) #TODO: maybe expand this into old_submission_data too
     submission_replies = collect_replies_to_user(all_submissions)
-    submission_voted_recently = collect_recently_voted_comments(all_submissions)
+    submission_voted_recently = collect_recent_votes(all_submissions)
+    recent_activity_objects = create_recent_activity_list(submission_comments, submission_replies, submission_voted_recently)
 
     #get all the submissions that the user submitted, in previous semesters
     old_submissions = Submission.objects.filter(authors=dashboard_user) \
@@ -217,7 +219,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         'old_submission_data': old_submission_data,
         'current_milestone_data': current_milestone_data,
         'allow_requesting_more_tasks': allow_requesting_more_tasks,
-        'submission_comments': submission_comments,
+        'recent_activity_objects': recent_activity_objects,
     })
 
 
