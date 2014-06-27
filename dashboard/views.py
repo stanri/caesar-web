@@ -139,7 +139,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
 #    def collect_replies_to_user(submissions):
 #        replies = []
 #        for submission in submissions:
-#            submission_notifications = Notification.objects.filter()
+#            submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='R')
 #            for notification in submission_notifications:
 #                if notification.comment.parent is not None:
 #                    if notification.comment.parent.author == dashboard_user:
