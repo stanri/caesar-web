@@ -142,7 +142,9 @@ $(document).ready(function() {
 <!--{% if submission_data or old_submission_data %}-->
 <div class='span12 submitted-assignments'>
 <h2 class="task-header">submitted assignments</h2>
-<button class="solo-submit"></button>
+<!--Following a href does not go anywhere. Supposed to go to a page for single submission-->
+<!--url, dashboard/dashboard/single-submit, is made, view is not-->
+<a href="{% url 'dashboard.views.all_activity' review_milestone.id participant.username %}" class="solo-submit">Submit Single Code</button>
 <div>
   {% for submission, reviewer_count, last_modified, user_comments, static_comments in submission_data %}
 

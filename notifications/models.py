@@ -1,4 +1,4 @@
-from django.template import Context, Template
+ffrom django.template import Context, Template
 from django.template.loader import get_template
 from django.db import models
 from django.db.models.signals import post_save
@@ -93,34 +93,47 @@ submission.
 #Note: comment in the args and in the 'comment': comment line might need to be instance
 #i.e. ...(sender, instance...) and 'comment': instance
 @receiver(post_save, sender=Comment)
-def add_comment_notification(sender, comment, created=False, raw=False, **kwargs):
+def add_comment_notification(sender, instance, created=False, raw=False, **kwargs):
     if created and not raw:
+#        context = Context({
+#        'site': site,
+#        'comment': instance,
+#        'chunk': instance.chunk,
+#        'submission': instance.chunk.file.submission
+#        'submission_author': instance.chunk.file.submission.authors.all() #this is a list of User objects!
+#        })
         notified_users = set()
         site = Site.objects.get_current()
-        context = Context({
-                'site': site,
-                'comment': comment,
-                'chunk': comment.chunk,
-                'submission': comment.chunk.file.submission
-                'submission_author': comment.chunk.file.submission.authors.all() #this is a list of User objects!
-            })
+        chunk = instance.chunk
+        submission = instance.chunk.file.submission
+        submission_authors = instance.chunk.file.submission.authors.all()
+
 
         #if the comment has a reply and the reply is not from the person who made the comment.
         #create a second variable to crawl up the reply tree for correct notification alerts.
-        reply = comment
+        reply = instance
         while reply.parent is not None:
             if ((reply.parent.author != reply.author)):
-                notification = Notification(recipient = comment.parent.author, reason='R')
+                notification = Notification(recipient = instance.parent.author, reason='R')
                 notification.submission = submission
-                notification.comment = comment
+                notification.comment = instance
                 notification.save()
+                notified_users.add(instance.parent.author)
                 reply = reply.parent #this is used to go up the reply tree.
 
-
-
-
         #otherwise, if the comment is a new comment on one of the users submissions.
-        for i in
+        if instance.parent ==  None:
+            for author in submission_authors:
+                if instance.author != author:
+                    notification = Notification(recipient = author, reason='C')
+                    notification.submission = submission
+                    notification.comment = instance
+                    notification.save()
+                    notified_users.add(author)
+        
+        #send the other users that have commented on the code in the past a notification
+        #with reason='A'
+        for comment in chunk.
 
 
 
