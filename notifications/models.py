@@ -142,15 +142,16 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
         #call in the for loop below.
 
         related_users = {comment.author for comment in chunk.comments.all()}
-        related_users = {comment.author for comment in chunk.comments.all()} check if this set comprehension is valid
         related_users.update(submission_authors)
 
         for user in related_users:
             if user not in notified_users:
                 if user in submission_authors: #check if author equality works (or do we need to compare id's?)
-                    notification = Notification(recipient = user, reason='U') #user gets an 'activity on their code' notification
+                    #user gets an 'activity on their code' notification
+                    notification = Notification(recipient = user, reason='U')
                 else:
-                    notification = Notification(recipient = user, reason='A') #user gets an 'activity on other code' notification
+                    #user gets an 'activity on other code' notification
+                    notification = Notification(recipient = user, reason='A')
                 notification.submission = submission
                 notification.comment = instance
                 notification.save()
