@@ -14,6 +14,7 @@ from review.models import Comment, Vote
 from tasks.models import Task
 from tasks.routing import assign_tasks
 from accounts.models import UserProfile, Extension, Member
+from notifications.models import Notification
 
 import datetime
 import sys
