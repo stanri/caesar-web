@@ -1,4 +1,4 @@
-ffrom django.template import Context, Template
+from django.template import Context, Template
 from django.template.loader import get_template
 from django.db import models
 from django.db.models.signals import post_save
