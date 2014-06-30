@@ -134,7 +134,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
             for notification in submission_notifications:
                 if notification.comment.parent is not None:
                     if notification.comment.parent.author == dashboard_user:
-                        replies.append((notification, notification.created, notification.reason))
+                        replies.append((notification, notification.created))
         return replies
 
 #   Code below is for the comments version of this method.
@@ -193,7 +193,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         #read in the template to decide if the comment is a reply to a user comment
         #or a comment on a users submission.
         #(if len(i) < 3, it's a vote object, so just gather the vote itself.)
-        recent_activity = [i[0] if len(i) < 3 else (i[0], i[2]) for i in recent_activity_tuple]
+        recent_activity = [i[0] for i in recent_activity_tuple]
         return recent_activity
 
 

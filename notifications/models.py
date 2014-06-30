@@ -144,7 +144,7 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
         related_users.update(submission_authors)
 
         for user in related_users:
-            if user not in notified_users:
+            if user not in notified_users and user != instance.author:
                 if user in submission_authors: #check if author equality works (or do we need to compare id's?)
                     #user gets an 'activity on their code' notification
                     notification = Notification(recipient = user, reason='U')
