@@ -23,7 +23,8 @@ class Notification(models.Model):
     RECEIVED_REPLY = 'R'
     COMMENT_ON_SUBMISSION = 'C'
     VOTE_ON_COMMENT = 'V'
-    ACTIVITY_ON_CHUNK = 'A'
+    ACTIVITY_ON_CHUNK = 'A' #chunk you are not submitter of
+    ACTIVITY_ON_SUBMITTED_CODE = 'U'
     REASON_CHOICES = (
             (SUMMARY, 'Summary'),
             (RECEIVED_REPLY, 'Received reply'),
@@ -58,7 +59,7 @@ NEW_REPLY_SUBJECT_TEMPLATE = Template(
 #
 # in this scenario, the following notifications would be created:
 # 'maxg' gets a notification from 'pnomario', with reason 'C' (comment on submission)
-# 'maxg' gets a notification from 'peipeipei', with reason 'A' (activity on chunk)
+# 'maxg' gets a notification from 'peipeipei', with reason 'U' (activity on chunk = user's code)
 # 'maxg' gets a notification from 'sarivera', with reason 'C' (comment on submission)
 #
 # 'pnomario' gets a notification from 'peipeipei', with reason 'R' (reply on comment)
@@ -138,11 +139,15 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
         #call in the for loop below.
 
         related_users = {comment.author for comment in chunk.comments.all()}
+        related_users = {comment.author for comment in chunk.comments.all()} check if this set comprehension is valid
         related_users.update(submission_authors)
 
         for user in related_users:
             if user not in notified_users:
-                notification = Notification(recipient = user, reason='A')
+                if user in submission_authors: #check if author equality works (or do we need to compare id's?)
+                    notification = Notification(recipient = user, reason='U') #user gets an 'activity on their code' notification
+                else:
+                    notification = Notification(recipient = user, reason='A') #user gets an 'activity on other code' notification
                 notification.submission = submission
                 notification.comment = instance
                 notification.save()
