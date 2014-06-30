@@ -88,11 +88,11 @@ $(document).ready(function() {
 <div class='row'>
 <div class='span12 recent-activity'>
     <h2 class='recent-activity-header'>recent activity</h2>
-        
+
         <h3>My Code</h3>
             <table class="my-recent-stream">
-                {% for notification in recent_activity_objects %} 
-                
+                {% for notification in recent_activity_objects %}
+
                     {% if notification.seen == False %}
 
                         {% if notification.chunk.author == user.username %}
@@ -124,11 +124,11 @@ $(document).ready(function() {
                         {% endif %}
 
                     {% endif %}
-                {% endfor %}    
+                {% endfor %}
             </table>
         <h3>Others' Code</h3>
             <table class="others-recent-stream">
-                {% for notification in recent_activity_objects %} 
+                {% for notification in recent_activity_objects %}
                     {% if notification.seen == False %}
                         {% if notification.chunk.author != user.username %}
         <!--                Activity Picture, done in CSS-->

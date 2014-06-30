@@ -105,22 +105,10 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
     '''
     def collect_comments_from_submissions(submissions):
         all_notifications = []
-        for submission in submissions:
-            user_submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='C')
-            for notification in user_submission_notifications:  #this is done to have a list of notifications instead of a list of lists.
-                all_notifications.append((notification, notification.created, notification.reason))
+        user_submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='C')
+        for notification in user_submission_notifications:  #this is done to have a list of notifications instead of a list of lists.
+            all_notifications.append((notification, notification.created))
         return all_notifications
-
-#   Code below is for the comments version of this method.
-#    def collect_comments_from_submissions(submissions):
-#        all_comments = []
-#        for submission in submissions:
-#            user_code_comments = Comment.objects.filter(chunk__file__submission=submission).filter(type='U')
-#            for comment in user_code_comments:  #this is done to have a list of comments instead of a list of lists.
-#                all_comments.append((comment, comment.created, False))
-#        return all_comments
-
-
 
     '''
     Returns a list of tuples in the form of (reply, reply.created, list_as_reply=True) where reply is a comment that is a child
@@ -129,25 +117,12 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
     '''
     def collect_replies_to_user(submissions):
         replies = []
-        for submission in submissions:
-            submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='R')
-            for notification in submission_notifications:
-                if notification.comment.parent is not None:
-                    if notification.comment.parent.author == dashboard_user:
-                        replies.append((notification, notification.created))
+        submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='R')
+        for notification in submission_notifications:
+            if notification.comment.parent is not None:
+                if notification.comment.parent.author == dashboard_user:
+                    replies.append((notification, notification.created))
         return replies
-
-#   Code below is for the comments version of this method.
-#    def collect_replies_to_user(submissions):
-#        replies = []
-#        for submission in submissions:
-#            submission_comments = Comment.objects.filter(chunk__file__submission=submission).filter(type='U')
-#            for comment in submission_comments:
-#                if comment.parent is not None:
-#                    if comment.parent.author == dashboard_user:
-#                        #NOTE: remember to use the version with this being True if a duplicate appears
-#                        replies.append((comment, comment.created, True))
-#        return replies
 
     '''
     Returns a list of comments with recent vote activity, with the comment with the most recent
@@ -161,14 +136,6 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
             #this may be wrong... check the second part of the tuple
             votes_tuple_list.append((vote_notification, vote_notification.vote.modified))
         return votes_tuple_list
-
-#   Code below is for the comments version of this method.
-#    def collect_recent_votes():
-#        votes_tuple_list = []
-#        votes_on_user = Vote.objects.filter(comment__author=dashboard_user)
-#        for vote in votes_on_user:
-#            votes_tuple_list.append((vote, vote.modified))
-#        return votes_tuple_list
 
     '''
     Returns a sorted list all of the list arguments by their time of modification or creation, depending on the object,
@@ -187,12 +154,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         #sorts the list by the time entry in the second position of each tuple.
         recent_activity_tuple.sort(key = lambda object_time_tuple: object_time_tuple[1])
 
-        #recent_activity contains 'Comment tuples' and Vote objects, where the last item is the
-        #most recent item that should appear at the top in recent activity in the template.
-        #Comment tuples are tuples in form (Comment, boolean), where the boolean will be
-        #read in the template to decide if the comment is a reply to a user comment
-        #or a comment on a users submission.
-        #(if len(i) < 3, it's a vote object, so just gather the vote itself.)
+        #Now that sorting is done, create a list of just the notification objects.
         recent_activity = [i[0] for i in recent_activity_tuple]
         return recent_activity
 
