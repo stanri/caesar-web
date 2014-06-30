@@ -87,8 +87,7 @@ def add_vote_notification(sender, instance, created=False, raw=False, **kwargs):
         return
 
 '''
-Creates a new Notification object for replies and new comments on a users
-submission.
+Creates a new Notification object for replies and new comments on a users submission.
 '''
 #Note: comment in the args and in the 'comment': comment line might need to be instance
 #i.e. ...(sender, instance...) and 'comment': instance
@@ -140,6 +139,9 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
 
         related_users = [comment.author for comment in chunk.comments.all()]
         related_users.extend(submission_authors)
+
+        #related_users = {comment.author for comment in chunk.comments.all()} check if this set comprehension is valid
+        #related_users.update(submission_authors)
 
         for user in related_users:
             if user not in notified_users:
