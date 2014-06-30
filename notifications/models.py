@@ -137,11 +137,8 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
         #we want a set for performance, since duplicates are taken care of by the notified_users.add(user)
         #call in the for loop below.
 
-        related_users = [comment.author for comment in chunk.comments.all()]
-        related_users.extend(submission_authors)
-
-        #related_users = {comment.author for comment in chunk.comments.all()} check if this set comprehension is valid
-        #related_users.update(submission_authors)
+        related_users = {comment.author for comment in chunk.comments.all()}
+        related_users.update(submission_authors)
 
         for user in related_users:
             if user not in notified_users:
