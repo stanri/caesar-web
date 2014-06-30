@@ -29,6 +29,9 @@ class Notification(models.Model):
             (SUMMARY, 'Summary'),
             (RECEIVED_REPLY, 'Received reply'),
             (COMMENT_ON_SUBMISSION, 'Received comment on submission'),
+            (VOTE_ON_COMMENT, 'Received vote on comment'),
+            (ACTIVITY_ON_CHUNK, 'There is activity on code you have reviewed before'),
+            (ACTIVITY_ON_SUBMITTED_CODE, 'There is activity on your code'),
     )
 
     submission = models.ForeignKey(Submission, blank=True, null=True, related_name='notifications')
