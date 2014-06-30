@@ -117,7 +117,7 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
                 notification.comment = instance
                 notification.save()
                 notified_users.add(instance.parent.author)
-                reply = reply.parent #this is used to go up the reply tree.
+            reply = reply.parent #this is used to go up the reply tree.
 
         #otherwise, if the comment is a new comment on one of the users submissions.
         if instance.parent ==  None:
