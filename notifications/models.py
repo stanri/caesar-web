@@ -36,8 +36,7 @@ class Notification(models.Model):
 
     submission = models.ForeignKey(Submission, blank=True, null=True, related_name='notifications')
     comment = models.ForeignKey(Comment, blank=True, null=True, related_name='notifications')
-#    vote = models.ForeignKey(Vote, blank=True, null=True, related_name='notifications')
-#   sender = models.ForeignKey(User, related_name='notifications')
+    vote = models.ForeignKey(Vote, blank=True, null=True, related_name='notifications')
     recipient = models.ForeignKey(User, related_name='notifications')
     reason = models.CharField(max_length=1, blank=True, choices=REASON_CHOICES)
     created = models.DateTimeField(auto_now_add=True)
@@ -78,16 +77,16 @@ NEW_REPLY_SUBJECT_TEMPLATE = Template(
 @receiver(post_save, sender=Vote)
 def add_vote_notification(sender, instance, created=False, raw=False, **kwargs):
     if created and not raw:
+#        context = Context({
+#            'site': site,
+#            'vote': instance,
+#            'comment_author': instance.comment.author
+#        })
         site = Site.objects.get_current()
-        context = Context({
-            'site': site,
-            'vote': instance,
-            'comment_author': instance.comment.author
-        })
         notification = Notification(recipient = instance.comment.author, reason='V')
         notification.submission = instance.comment.chunk.file.submission
-        notification.comment = instance.comment
-        notification.save();
+        notification.vote = instance
+        notification.save()
         return
 
 '''
