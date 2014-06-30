@@ -58,7 +58,7 @@ NEW_REPLY_SUBJECT_TEMPLATE = Template(
 #
 # in this scenario, the following notifications would be created:
 # 'maxg' gets a notification from 'pnomario', with reason 'C' (comment on submission)
-# 'maxg' gets a notification from 'peipeipei', with reason 'A' (activity on chunk)
+# 'maxg' gets a notification from 'peipeipei', with reason 'RC' (activity on chunk = reply to a comment)
 # 'maxg' gets a notification from 'sarivera', with reason 'C' (comment on submission)
 #
 # 'pnomario' gets a notification from 'peipeipei', with reason 'R' (reply on comment)
@@ -143,7 +143,10 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
 
         for user in related_users:
             if user not in notified_users:
-                notification = Notification(recipient = user, reason='A')
+                if instance.author == chunk.author: #check if author equality works (or do we need to compare id's?)
+                    notification = Notification(recipient = user, reason='RC')
+                else:
+                    notification = Notification(recipient = user, reason='A')
                 notification.submission = submission
                 notification.comment = instance
                 notification.save()
