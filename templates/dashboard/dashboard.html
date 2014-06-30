@@ -96,7 +96,7 @@ $(document).ready(function() {
     <h3>My Code</h3>
         <table class="my-recent-stream">
             {% for notification in recent_activity_objects %}
-                {% if notification.seen == False && notification.chunk.author == username%}
+                {% if notification.seen == False & notification.chunk.author == username%}
 <!--                Activity Picture, done in CSS-->
                     <td class="note-image">
                         <span class="image-{{notification.reason}}"></span>
@@ -128,7 +128,7 @@ $(document).ready(function() {
     <h3>Others' Code</h3>
         <table class="others-recent-stream">
             {% for notification in recent_activity_objects %}
-                {% if notification.seen == False && notification.chunk.author == username%}
+                {% if notification.seen == False & notification.chunk.author == username%}
 <!--                Activity Picture, done in CSS-->
                     <td class="note-image">
                         <span class="image-{{notification.reason}}"></span>
