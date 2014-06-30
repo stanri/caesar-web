@@ -103,21 +103,23 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
     @param - submissions - QuerySet of submissions.
     '''
     def collect_comments_from_submissions(submissions):
-        all_comments = []
+        all_notifications = []
         for submission in submissions:
-            user_code_comments = Comment.objects.filter(chunk__file__submission=submission).filter(type='U')
-            for comment in user_code_comments:  #this is done to have a list of comments instead of a list of lists.
-                all_comments.append((comment, comment.created, False))
-        return all_comments
+            user_submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='C')
+            for notification in user_submission_notifications:  #this is done to have a list of notifications instead of a list of lists.
+                all_notifications.append((notification, notification.created, notification.reason))
+        return all_notifications
 
-#   Code below is for the notifications version of this method.
+#   Code below is for the comments version of this method.
 #    def collect_comments_from_submissions(submissions):
-#        all_notifications = []
+#        all_comments = []
 #        for submission in submissions:
-#            user_submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='C')
-#            for notification in user_submission_notifications:  #this is done to have a list of comments instead of a list of lists.
-#                all_notifications.append((notification, notification.created, notification.reason))
-#        return all_notifications
+#            user_code_comments = Comment.objects.filter(chunk__file__submission=submission).filter(type='U')
+#            for comment in user_code_comments:  #this is done to have a list of comments instead of a list of lists.
+#                all_comments.append((comment, comment.created, False))
+#        return all_comments
+
+
 
     '''
     Returns a list of tuples in the form of (reply, reply.created, list_as_reply=True) where reply is a comment that is a child
@@ -127,23 +129,23 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
     def collect_replies_to_user(submissions):
         replies = []
         for submission in submissions:
-            submission_comments = Comment.objects.filter(chunk__file__submission=submission).filter(type='U')
-            for comment in submission_comments:
-                if comment.parent is not None:
-                    if comment.parent.author == dashboard_user:
-                        #NOTE: remember to use the version with this being True if a duplicate appears
-                        replies.append((comment, comment.created, True))
+            submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='R')
+            for notification in submission_notifications:
+                if notification.comment.parent is not None:
+                    if notification.comment.parent.author == dashboard_user:
+                        replies.append((notification, notification.created, notification.reason))
         return replies
 
-#   Code below is for the notifications version of this method.
+#   Code below is for the comments version of this method.
 #    def collect_replies_to_user(submissions):
 #        replies = []
 #        for submission in submissions:
-#            submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='R')
-#            for notification in submission_notifications:
-#                if notification.comment.parent is not None:
-#                    if notification.comment.parent.author == dashboard_user:
-#                        replies.append((notification, notification.created, notification.reason))
+#            submission_comments = Comment.objects.filter(chunk__file__submission=submission).filter(type='U')
+#            for comment in submission_comments:
+#                if comment.parent is not None:
+#                    if comment.parent.author == dashboard_user:
+#                        #NOTE: remember to use the version with this being True if a duplicate appears
+#                        replies.append((comment, comment.created, True))
 #        return replies
 
     '''
@@ -153,10 +155,19 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
     '''
     def collect_recent_votes():
         votes_tuple_list = []
-        votes_on_user = Vote.objects.filter(comment__author=dashboard_user)
-        for vote in votes_on_user:
-            votes_tuple_list.append((vote, vote.modified))
+        votes_on_user = Notification.objects.filter(recipient=dashboard_user).filter(reason='V')
+        for vote_notification in votes_on_user:
+            #this may be wrong... check the second part of the tuple
+            votes_tuple_list.append((vote_notification, vote_notification.vote.modified))
         return votes_tuple_list
+
+#   Code below is for the comments version of this method.
+#    def collect_recent_votes():
+#        votes_tuple_list = []
+#        votes_on_user = Vote.objects.filter(comment__author=dashboard_user)
+#        for vote in votes_on_user:
+#            votes_tuple_list.append((vote, vote.modified))
+#        return votes_tuple_list
 
     '''
     Returns a sorted list all of the list arguments by their time of modification or creation, depending on the object,
