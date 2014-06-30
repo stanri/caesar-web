@@ -58,7 +58,7 @@ NEW_REPLY_SUBJECT_TEMPLATE = Template(
 #
 # in this scenario, the following notifications would be created:
 # 'maxg' gets a notification from 'pnomario', with reason 'C' (comment on submission)
-# 'maxg' gets a notification from 'peipeipei', with reason 'RC' (activity on chunk = reply to a comment)
+# 'maxg' gets a notification from 'peipeipei', with reason 'U' (activity on chunk = user's code)
 # 'maxg' gets a notification from 'sarivera', with reason 'C' (comment on submission)
 #
 # 'pnomario' gets a notification from 'peipeipei', with reason 'R' (reply on comment)
@@ -137,16 +137,13 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
         #we want a set for performance, since duplicates are taken care of by the notified_users.add(user)
         #call in the for loop below.
 
-        related_users = [comment.author for comment in chunk.comments.all()]
-        related_users.extend(submission_authors)
-
-        #related_users = {comment.author for comment in chunk.comments.all()} check if this set comprehension is valid
-        #related_users.update(submission_authors)
+        related_users = {comment.author for comment in chunk.comments.all()} check if this set comprehension is valid
+        related_users.update(submission_authors)
 
         for user in related_users:
             if user not in notified_users:
-                if instance.author == chunk.author: #check if author equality works (or do we need to compare id's?)
-                    notification = Notification(recipient = user, reason='RC')
+                if user in submission_authors: #check if author equality works (or do we need to compare id's?)
+                    notification = Notification(recipient = user, reason='U')
                 else:
                     notification = Notification(recipient = user, reason='A')
                 notification.submission = submission
