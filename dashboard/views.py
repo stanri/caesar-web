@@ -164,7 +164,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
 
         #Now that sorting is done, create a list of just the notification objects.
         recent_activity = []
-        snippet_maxlen = 100
+        snippet_max_len = 100
         for i in recent_activity_tuple:
             snippet = "Snippet not found."
             if i[0].comment is not None:
