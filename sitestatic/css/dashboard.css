@@ -10,7 +10,7 @@ div.assignment-header {
     position: relative;
     height: 18px;
     clear: both;
-    padding: 2px 0px;  
+    padding: 2px 0px;
 }
 
 .note-line:hover{
@@ -73,7 +73,7 @@ div.assignment-header {
 }
 
 .task-snippet {
-    display: block; 
+    display: block;
     color: #777;
     font-family: monospace;
     font-size: 12px;
@@ -83,8 +83,9 @@ div.assignment-header {
     margin-left: 25em;
     clear: none;
 }
+
 .submit-assignment {
-    display: block; 
+    display: block;
     color: black;
     font-family: monospace;
     font-size: 12px;
@@ -100,6 +101,7 @@ div.assignment-header {
     float: right;
     padding: 0px 5px;
 }
+
 .progress{
     display: none;
 }
@@ -112,6 +114,7 @@ div.assignment-header {
     padding-left: 18px;
     margin-right: 4px;
 }
+
 .reviewer-count {
     display: inline;
     background-image: url('../img/user-silhouette.png');
@@ -119,6 +122,7 @@ div.assignment-header {
     height: 16px;
     padding-left: 18px;
 }
+
 .robot-count {
     display: inline;
     background-image: url('../img/robot.png');
@@ -131,30 +135,35 @@ table.current-assignment {
     margin-bottom: 2em;
     border-collapse: collapse;
 }
+
 .history{
     color: #0E6996;
     cursor: pointer;
 }
+
 .history-submissions{
     color: #0E6996;
     cursor: pointer;
 }
+
 .grey-text {
     color: #777;
     width: 20em;
 }
-.submit-text {
-}
+
 .black-text {
     color: black;
     width: 10em;
 }
+
 .red-text{
     color: red;
 }
+
 .assignment-line {
     border-bottom: 1px solid #aaa;
 }
+
 .instructions {
     background-color: #e6efc2;
     color: #333;
@@ -162,14 +171,25 @@ table.current-assignment {
     font-size: 1em;
     text-shadow: none;
 }
+
 .slack-content * {
     display: inline-block;
+    font-size: 1em;
+}
+
+.slack-content .bar:last-child {
+    display: none;
+}
+
+.slack-left {
+    margin: 0px;
+/*    margin-right: 10px;*/
 }
 
 span.image-C, span.image-R{
     font-family: sans-serif;
     display: block;
-    background: url('../img/balloon.png') no-repeat !important; 
+    background: url('../img/balloon.png') no-repeat !important;
     width: 16px;
     height: 16px;
 }
@@ -188,7 +208,7 @@ span.image-U, .image-A{
     background: url('../img/robot.png') no-repeat !important;
     width: 16px;
     height: 16px;
-}  
+}
 
 div.all-activity-link {
     text-align: right;

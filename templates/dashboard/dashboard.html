@@ -8,8 +8,8 @@
 {% block js %}
 {{ block.super }}
 <script>
-    
-    
+
+
 $(document).ready(function() {
 
     $('.submission-line').click(function(e) {
@@ -79,7 +79,7 @@ $(document).ready(function() {
         window.location = "/chunks/view/" + chunk_Id + "#" + activityType + "-" + comment_Id;
         return false;
     });
-    
+
 });
 </script>
 
@@ -102,10 +102,10 @@ $(document).ready(function() {
       <div class="all-activity-link">
         <a href="{% url 'dashboard.views.all_activity' %}"> See all activity </a>
       </div>
-      
+
         <h3>My Code</h3>
             <table class="my-recent-stream">
-                {% for notification, snippet in recent_activity_objects %} 
+                {% for notification, snippet in recent_activity_objects %}
                     {% if notification.seen == False %}
 
                         {% if request.user in notification.comment.chunk.file.submission.authors.all%}
@@ -140,17 +140,17 @@ $(document).ready(function() {
                                     <span>{{notification.comment.chunk.name}}</span>
                                 </td>
                             </tr>
-                            
+
                         {% endif %}
 
                     {% endif %}
-                {% endfor %}    
+                {% endfor %}
             </table>
         <h3>Others' Code</h3>
             <table class="others-recent-stream">
-                {% for notification, snippet in recent_activity_objects %} 
+                {% for notification, snippet in recent_activity_objects %}
                     {% if notification.seen == False %}
-                
+
                         {% if request.user not in notification.comment.chunk.file.submission.authors.all%}
                             <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}
                                                       {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}
@@ -195,9 +195,10 @@ $(document).ready(function() {
 
 <div class="slack-content">
   {% for semester, slack in current_slack_data %}
-    <h4 class="slack-left"> <b>{{semester.subject.name}}: </b> {{slack}} slack days left </h4>
+    <p class="slack-left"><b>{{semester.subject.name}}: </b> {{slack}} slack days left</p>
+    <p class="bar"> &nbsp; | &nbsp; </p>
   {% empty %}
-    <p> No current courses </p>
+    <p> You are not currently enrolled in any courses. </p>
   {% endfor %}
 </div>
 
@@ -225,7 +226,7 @@ $(document).ready(function() {
 <div class='span12 submitted-assignments'>
 <h2 class="task-header">submitted assignments</h2>
 
-<div>
+<div class='task-list'>
   {% for submission, reviewer_count, last_modified, user_comments, static_comments in submission_data %}
 
   <div id ="submission-{{submission.id}}" class="submission-line">
@@ -251,7 +252,7 @@ $(document).ready(function() {
   {% endfor %}
 </div>
 {% if old_submission_data %}
-    <div class="history-submissions"> show previous semesters </div>
+    <div class="span12 history-submissions"> show previous semesters </div>
     <div id="historic-submissions" class="task-list">
       {% for submission, reviewer_count, last_modified, user_comments, static_comments in old_submission_data %}
 
@@ -280,8 +281,6 @@ $(document).ready(function() {
 {% endif %}
 </div>
 <!--{% endif %}-->
-
-<br>
 
 <div class='span12 to-review'>
   <div class="result"></div>
