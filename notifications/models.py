@@ -86,6 +86,7 @@ def add_vote_notification(sender, instance, created=False, raw=False, **kwargs):
         notification = Notification(recipient = instance.comment.author, reason='V')
         notification.submission = instance.comment.chunk.file.submission
         notification.vote = instance
+        notification.comment = instance.comment
         notification.save()
         return
 

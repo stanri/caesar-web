@@ -90,11 +90,16 @@ $(document).ready(function() {
 <div class='row'>
 <div class='span12 recent-activity'>
     <h2 class='recent-activity-header'>recent activity</h2>
-        
+
         <h3>My Code</h3>
             <table class="my-recent-stream">
+<<<<<<< HEAD
                 {% for notification, snippet in recent_activity_objects %} 
                 
+=======
+                {% for notification in recent_activity_objects %}
+
+>>>>>>> 6919784f541dd79cdfdef131df70332d4f540c34
                     {% if notification.seen == False %}
 
                         {% if notification.chunk.author == requests.user %}
@@ -129,15 +134,15 @@ $(document).ready(function() {
                             <tr class="second-row">
                                 {{snippet}}
                             </tr>
-                            
+
                         {% endif %}
 
                     {% endif %}
-                {% endfor %}    
+                {% endfor %}
             </table>
         <h3>Others' Code</h3>
             <table class="others-recent-stream">
-                {% for notification in recent_activity_objects %} 
+                {% for notification in recent_activity_objects %}
                     {% if notification.seen == False %}
                         {% if notification.chunk.author != requests.user %}
         <!--                Activity Picture, done in CSS-->
