@@ -93,13 +93,7 @@ $(document).ready(function() {
 
         <h3>My Code</h3>
             <table class="my-recent-stream">
-<<<<<<< HEAD
                 {% for notification, snippet in recent_activity_objects %} 
-                
-=======
-                {% for notification in recent_activity_objects %}
-
->>>>>>> 6919784f541dd79cdfdef131df70332d4f540c34
                     {% if notification.seen == False %}
 
                         {% if notification.chunk.author == requests.user %}
