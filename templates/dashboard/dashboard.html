@@ -157,7 +157,9 @@ $(document).ready(function() {
             <!--                Info on the activity and chunk-->
                                 <td class="note-activity">
                                     {% if notification.reason == "A" %}
-                                        <span>There is activity on {{notification.comment.chunk.file.submission.authors.all}}'s code!</span>
+                                        <span>There is activity on {% for user in notification.comment.chunk.file.submission.authors.all %}
+                                            <span>{{user.username}}'s </span>
+                                            {% endfor %} code!</span>
                                     {% endif %}
                                     {% if notification.reason == "R" %}
                                         <span>{{notification.comment.author}} replied to your comment!</span>
