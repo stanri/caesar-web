@@ -52,19 +52,10 @@ def dashboard(request):
 @login_required
 def all_activity(request):
     user = request.user
-#    return render(request, 'dashboard/dashboard.html', {
-#        'active_tasks': active_tasks,
-#        'completed_tasks': completed_tasks,
-#        'old_completed_tasks': old_completed_tasks,
-#        'new_task_count': new_task_count,
-#        'submission_data': submission_data,
-#        'old_submission_data': old_submission_data,
-#        'current_milestone_data': current_milestone_data,
-#        'allow_requesting_more_tasks': allow_requesting_more_tasks,
-#        'recent_activity_objects': recent_activity_objects,
-#        'current_slack_data': current_slack_data,
-#    })
-    return ""
+    recent_activity_objects = create_recent_activity_list(collect_all_notifications(user))
+    return render(request, 'dashboard/activity.html', {
+        'recent_activity_objects': recent_activity_objects,
+    })
 
 @staff_member_required
 def student_dashboard(request, username):
