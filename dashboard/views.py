@@ -126,9 +126,10 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
     def collect_activity():
         #test this in the shell
         #TODO: how can i do this in one query?
-        activity_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='U')
-        activity_notifications.extend(Notification.objects.filter(recipient=dashboard_user).filter(reason='A'))
-        all_notifications = [(i, i.created) for i in activity_notifications]
+        user_activity = Notification.objects.filter(recipient=dashboard_user).filter(reason='U')
+        general_activity = Notification.objects.filter(recipient=dashboard_user).filter(reason='A')
+        all_notifications = [(i, i.created) for i in user_activity]
+        all_notifications.extend([(i, i.created) for i in general_activity])
         return all_notifications
 
     '''
@@ -150,8 +151,9 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
     @param replies_list - list generated from collect_replies_to_user
     @param comments_from_vote_list - list generated from collect_recent_votes
     '''
-    def create_recent_activity_list(comments_list, replies_list, votes_list, activity_list):
-        list_of_lists = [comments_list, replies_list, votes_list, activity_list]
+    #TODO: is *args better than passing in the big lists directly?
+    def create_recent_activity_list(*args):
+        list_of_lists = [i for i in args]
 
         #list comp. flattens list_of_lists
         #(see http://stackoverflow.com/questions/716477/join-list-of-lists-in-python)
