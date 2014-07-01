@@ -4,6 +4,20 @@
 div.assignment-header {
     padding-top: 2em;
 }
+
+.note-line{
+    border-bottom: 1px solid #aaa;
+    position: relative;
+    height: 18px;
+    clear: both;
+    padding: 2px 0px;  
+}
+
+.note-line:hover{
+    background-color: #eee;
+    cursor: pointer;
+}
+
 .task-list {
     margin-bottom: 18px;
 }
@@ -150,11 +164,6 @@ table.current-assignment {
 }
 .semester-slack * {
     display: inline-block;
-}
-
-.first-row:hover{
-    background-color:#eee;
-    cursor: pointer;
 }
 
 span.image-C, span.image-R{
