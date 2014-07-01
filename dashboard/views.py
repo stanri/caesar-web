@@ -166,11 +166,11 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         recent_activity = []
         snippet_maxlen = 100
         for i in recent_activity_tuple:
-            snippet = "No snippet"
+            snippet = "Snippet not found."
             if i[0].comment is not None:
                 snippet = i[0].comment.chunk.generate_snippet(i[0].comment.start, i[0].comment.end)
-                if len(snippet) > snippet_maxlen:
-                    snippet = snippet[:snippet_maxlen]
+                if len(snippet) > snippet_max_len:
+                    snippet = snippet[:snippet_max_len]
             recent_activity.append( (i[0],snippet) )
         return recent_activity
 
