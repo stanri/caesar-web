@@ -163,7 +163,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         recent_activity_tuple.sort(key = lambda object_time_tuple: object_time_tuple[1])
 
         #Now that sorting is done, create a list of just the notification objects.
-        recent_activity = [i[0] for i in recent_activity_tuple]
+        recent_activity = [(i[0], i[0].comment.generate_snippet()) for i in recent_activity_tuple]
         return recent_activity
 
 
@@ -180,11 +180,11 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
 
     submission_data = collect_submission_data(submissions)
     #TODO: make sure this isn't too time intensive.
-    submission_comments = collect_comments_from_submissions()
+    direct_comment_notifications = collect_comments_from_submissions()
     reply_notifications = collect_replies_to_user()
     vote_notifications = collect_recent_votes()
     activity_list = collect_activity()
-    recent_activity_objects = create_recent_activity_list(submission_comments, reply_notifications, vote_notifications, activity_list)
+    recent_activity_objects = create_recent_activity_list(direct_comment_notifications, reply_notifications, vote_notifications, activity_list)
 
     #get all the submissions that the user submitted, in previous semesters
     old_submissions = Submission.objects.filter(authors=dashboard_user) \
