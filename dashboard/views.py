@@ -166,7 +166,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         recent_activity = []
         for i in recent_activity_tuple:
             if i[0].comment is not None:
-                recent_activity.append((i[0], i[0].comment.chunk.generate_snippet(i[0].comment.start, i[0].comment.end))
+                recent_activity.append( (i[0], i[0].comment.chunk.generate_snippet(i[0].comment.start, i[0].comment.end)) )
             else:
                 recent_activity.append((i[0], "Snippet not found."))
         return recent_activity
