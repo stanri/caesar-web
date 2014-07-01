@@ -138,6 +138,7 @@ INSTALLED_APPS = (
     'debug_toolbar',
 
     'utils',
+    'dashboard',
     'accounts',
     'chunks',
     'review',

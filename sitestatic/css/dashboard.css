@@ -162,7 +162,7 @@ table.current-assignment {
     font-size: 1em;
     text-shadow: none;
 }
-.semester-slack * {
+.slack-content * {
     display: inline-block;
 }
 
@@ -189,7 +189,10 @@ span.image-U, .image-A{
     width: 16px;
     height: 16px;
 }  
-    
+
+div.all-activity-link {
+    text-align: right;
+}
 
 
 

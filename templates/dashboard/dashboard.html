@@ -96,9 +96,13 @@ $(document).ready(function() {
 {% block content %}
 
 <div class='row'>
+
 <div class='span12 recent-activity'>
     <h2 class='recent-activity-header'>recent activity</h2>
-        
+      <div class="all-activity-link">
+        <a href="{% url 'dashboard.views.all_activity' %}"> See all activity </a>
+      </div>
+      
         <h3>My Code</h3>
             <table class="my-recent-stream">
                 {% for notification, snippet in recent_activity_objects %} 
