@@ -163,7 +163,12 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         recent_activity_tuple.sort(key = lambda object_time_tuple: object_time_tuple[1])
 
         #Now that sorting is done, create a list of just the notification objects.
-        recent_activity = [(i[0], i[0].comment.generate_snippet()) for i in recent_activity_tuple]
+        recent_activity = []
+        for i in recent_activity_tuple:
+            if i[0].comment is not None:
+                recent_activity.append((i[0], i[0].comment.generate_snippet))
+            else:
+                recent_activity.append((i[0], "Snippet not found."))
         return recent_activity
 
 
