@@ -189,7 +189,10 @@ span.image-U, .image-A{
     width: 16px;
     height: 16px;
 }  
-    
+
+div.all-activity-link {
+    text-align: right;
+}
 
 
 
