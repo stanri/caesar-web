@@ -20,6 +20,7 @@ import datetime
 import sys
 import logging
 
+#METHODS FOR URLS
 @login_required
 def dashboard(request):
     user = request.user
@@ -48,6 +49,23 @@ def dashboard(request):
 
     return dashboard_for(request, user, new_task_count)
 
+@login_required
+def all_activity(request):
+    user = request.user
+#    return render(request, 'dashboard/dashboard.html', {
+#        'active_tasks': active_tasks,
+#        'completed_tasks': completed_tasks,
+#        'old_completed_tasks': old_completed_tasks,
+#        'new_task_count': new_task_count,
+#        'submission_data': submission_data,
+#        'old_submission_data': old_submission_data,
+#        'current_milestone_data': current_milestone_data,
+#        'allow_requesting_more_tasks': allow_requesting_more_tasks,
+#        'recent_activity_objects': recent_activity_objects,
+#        'current_slack_data': current_slack_data,
+#    })
+    return ""
+
 @staff_member_required
 def student_dashboard(request, username):
     try:
@@ -55,6 +73,87 @@ def student_dashboard(request, username):
     except:
         raise Http404
     return dashboard_for(request, other_user)
+
+
+# HELPER METHODS FOR NOTIFICATIONS BELOW
+'''
+Returns a list of tuples in the form of (i, i.created) where i is a notification that comes from a comment
+on the Users code sample.
+'''
+def collect_comments_from_submissions(dashboard_user):
+    all_notifications = []
+    user_submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='C')
+    for notification in user_submission_notifications:  #this is done to have a list of notifications instead of a list of lists.
+        all_notifications.append((notification, notification.created))
+    return all_notifications
+
+'''
+Returns a list of tuples in the form of (reply, reply.created) where reply is a comment that is a child
+to a parent comment created by the dashboard user.
+'''
+def collect_replies_to_user(dashboard_user):
+    replies = []
+    submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='R').select_related('comment')
+    for notification in submission_notifications:
+        if notification.comment.parent is not None:
+            if notification.comment.parent.author == dashboard_user:
+                replies.append((notification, notification.created))
+    return replies
+
+'''
+Returns a list of tuples in the form of (i, i.created) where i is a notification that comes from activity on
+both the Users code and Others' code
+'''
+def collect_activity(dashboard_user):
+    #test this in the shell
+    #TODO: how can i do this in one query?
+    user_activity = Notification.objects.filter(recipient=dashboard_user).filter(reason='U')
+    general_activity = Notification.objects.filter(recipient=dashboard_user).filter(reason='A')
+    all_notifications = [(i, i.created) for i in user_activity]
+    all_notifications.extend([(i, i.created) for i in general_activity])
+    return all_notifications
+
+'''
+Returns a list of comments with recent vote activity, with the comment with the most recent
+vote activity at the end of the list.
+'''
+def collect_recent_votes(dashboard_user):
+    votes_tuple_list = []
+    votes_on_user = Notification.objects.filter(recipient=dashboard_user).filter(reason='V')
+    for vote_notification in votes_on_user:
+        #this may be wrong... check the second part of the tuple
+        votes_tuple_list.append((vote_notification, vote_notification.vote.modified))
+    return votes_tuple_list
+
+'''
+Returns a sorted list all of the list arguments by their time of modification or creation, depending on the object,
+where the 0 index is used for the earliest action. (votes use modification time, comments use creation time)
+@param comments_list - list generated from collect_comments_from_submissions
+@param replies_list - list generated from collect_replies_to_user
+@param comments_from_vote_list - list generated from collect_recent_votes
+'''
+#TODO: is *args better than passing in the big lists directly?
+def create_recent_activity_list(*args):
+    list_of_lists = [i for i in args]
+
+    #list comp. flattens list_of_lists
+    #(see http://stackoverflow.com/questions/716477/join-list-of-lists-in-python)
+    recent_activity_tuple = [inner for outer in list_of_lists for inner in outer]
+
+    #sorts the list by the time entry in the second position of each tuple.
+    recent_activity_tuple.sort(key = lambda object_time_tuple: object_time_tuple[1])
+
+    #Now that sorting is done, create a list of just the notification objects.
+    recent_activity = []
+    snippet_max_len = 100
+    for i in recent_activity_tuple:
+        snippet = "Snippet not found."
+        if i[0].comment is not None:
+            snippet = i[0].comment.chunk.generate_snippet(i[0].comment.start, i[0].comment.end)
+            if len(snippet) > snippet_max_len:
+                snippet = snippet[:snippet_max_len]
+        recent_activity.append( (i[0],snippet) )
+    return recent_activity
 
 def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_more_tasks = False):
     def annotate_tasks_with_counts(tasks):
@@ -81,6 +180,15 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         .order_by('completed').reverse()
     completed_tasks = annotate_tasks_with_counts(completed_tasks)
 
+    #get all the submissions that the user submitted
+    submissions = Submission.objects.filter(authors=dashboard_user) \
+        .filter(milestone__duedate__lt=datetime.datetime.now()) \
+        .order_by('milestone__duedate')\
+        .filter(milestone__assignment__semester__is_current_semester=True)\
+        .select_related('chunk__file__assignment') \
+        .annotate(last_modified=Max('files__chunks__comments__modified'))\
+        .reverse()
+
     '''
     Gathers data from submissions of a user, including comments and number of reviewers on those submissions.
     @attr - submissions - QuerySet of submissions.
@@ -95,103 +203,12 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
                                       user_comments, static_comments))
         return data
 
-    '''
-    Returns a list of tuples in the form of (i, i.created) where i is a notification that comes from a comment
-    on the Users code sample.
-    '''
-    def collect_comments_from_submissions():
-        all_notifications = []
-        user_submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='C')
-        for notification in user_submission_notifications:  #this is done to have a list of notifications instead of a list of lists.
-            all_notifications.append((notification, notification.created))
-        return all_notifications
-
-    '''
-    Returns a list of tuples in the form of (reply, reply.created) where reply is a comment that is a child
-    to a parent comment created by the dashboard user.
-    '''
-    def collect_replies_to_user():
-        replies = []
-        submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='R').select_related('comment')
-        for notification in submission_notifications:
-            if notification.comment.parent is not None:
-                if notification.comment.parent.author == dashboard_user:
-                    replies.append((notification, notification.created))
-        return replies
-
-    '''
-    Returns a list of tuples in the form of (i, i.created) where i is a notification that comes from activity on
-    both the Users code and Others' code
-    '''
-    def collect_activity():
-        #test this in the shell
-        #TODO: how can i do this in one query?
-        user_activity = Notification.objects.filter(recipient=dashboard_user).filter(reason='U')
-        general_activity = Notification.objects.filter(recipient=dashboard_user).filter(reason='A')
-        all_notifications = [(i, i.created) for i in user_activity]
-        all_notifications.extend([(i, i.created) for i in general_activity])
-        return all_notifications
-
-    '''
-    Returns a list of comments with recent vote activity, with the comment with the most recent
-    vote activity at the end of the list.
-    '''
-    def collect_recent_votes():
-        votes_tuple_list = []
-        votes_on_user = Notification.objects.filter(recipient=dashboard_user).filter(reason='V')
-        for vote_notification in votes_on_user:
-            #this may be wrong... check the second part of the tuple
-            votes_tuple_list.append((vote_notification, vote_notification.vote.modified))
-        return votes_tuple_list
-
-    '''
-    Returns a sorted list all of the list arguments by their time of modification or creation, depending on the object,
-    where the 0 index is used for the earliest action. (votes use modification time, comments use creation time)
-    @param comments_list - list generated from collect_comments_from_submissions
-    @param replies_list - list generated from collect_replies_to_user
-    @param comments_from_vote_list - list generated from collect_recent_votes
-    '''
-    #TODO: is *args better than passing in the big lists directly?
-    def create_recent_activity_list(*args):
-        list_of_lists = [i for i in args]
-
-        #list comp. flattens list_of_lists
-        #(see http://stackoverflow.com/questions/716477/join-list-of-lists-in-python)
-        recent_activity_tuple = [inner for outer in list_of_lists for inner in outer]
-
-        #sorts the list by the time entry in the second position of each tuple.
-        recent_activity_tuple.sort(key = lambda object_time_tuple: object_time_tuple[1])
-
-        #Now that sorting is done, create a list of just the notification objects.
-        recent_activity = []
-        snippet_max_len = 100
-        for i in recent_activity_tuple:
-            snippet = "Snippet not found."
-            if i[0].comment is not None:
-                snippet = i[0].comment.chunk.generate_snippet(i[0].comment.start, i[0].comment.end)
-                if len(snippet) > snippet_max_len:
-                    snippet = snippet[:snippet_max_len]
-            recent_activity.append( (i[0],snippet) )
-        return recent_activity
-
-
-    #get all the submissions that the user submitted
-    submissions = Submission.objects.filter(authors=dashboard_user) \
-        .filter(milestone__duedate__lt=datetime.datetime.now()) \
-        .order_by('milestone__duedate')\
-        .filter(milestone__assignment__semester__is_current_semester=True)\
-        .select_related('chunk__file__assignment') \
-        .annotate(last_modified=Max('files__chunks__comments__modified'))\
-        .reverse()
-
-    all_submissions = Submission.objects.all()
-
     submission_data = collect_submission_data(submissions)
     #TODO: make sure this isn't too time intensive.
-    direct_comment_notifications = collect_comments_from_submissions()
-    reply_notifications = collect_replies_to_user()
-    vote_notifications = collect_recent_votes()
-    activity_list = collect_activity()
+    direct_comment_notifications = collect_comments_from_submissions(dashboard_user)
+    reply_notifications = collect_replies_to_user(dashboard_user)
+    vote_notifications = collect_recent_votes(dashboard_user)
+    activity_list = collect_activity(dashboard_user)
     recent_activity_objects = create_recent_activity_list(direct_comment_notifications, reply_notifications, vote_notifications, activity_list)
 
     #get all the submissions that the user submitted, in previous semesters
