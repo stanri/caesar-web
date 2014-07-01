@@ -119,14 +119,11 @@ $(document).ready(function() {
                                 </td>
                                 <td class="note-comment">
                                     <span>{{notification.comment}}</span>
+                                    <span>{{snippet}}</span>
                                 </td>
                                 <td class="note-on-what">
                                     <span>{{notification.comment.chunk.name}}</span>
                                 </td>
-                            </tr>
-                
-                            <tr class="second-row">
-                                {{snippet}}
                             </tr>
                             
                         {% endif %}
@@ -140,7 +137,7 @@ $(document).ready(function() {
                     {% if notification.seen == False %}
                         {% if notification.chunk.author != requests.user %}
         <!--                Activity Picture, done in CSS-->
-                            </tr>
+                            <tr>
                                 <td class="note-image">
                                     <span class="image-{{notification.reason}}"></span>
                                 </td>
