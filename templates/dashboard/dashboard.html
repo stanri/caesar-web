@@ -187,6 +187,14 @@ $(document).ready(function() {
     <h2 class="task-header">upcoming assignments</h2>
 </div>
 
+<div class="slack-content">
+  {% for semester, slack in current_slack_data %}
+    <h4 class="slack-left"> <b>{{semester.subject.name}}: </b> {{slack}} slack days left </h4>
+  {% empty %}
+    <p> No current courses </p>
+  {% endfor %}
+</div>
+
 <table class="current-assignment">
   {% for milestone, extension in current_milestone_data %}
   <tr class="assignment-line">
