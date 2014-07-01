@@ -76,6 +76,8 @@ def student_dashboard(request, username):
 
 
 # HELPER METHODS FOR NOTIFICATIONS BELOW
+#Note: The methods that use filter for notifications aren't used by what we wrote, but are left here
+#in case someone needs them in the future for other updates to Caesar.
 '''
 Returns a list of tuples in the form of (i, i.created) where i is a notification that comes from a comment
 on the Users code sample.
@@ -105,7 +107,6 @@ Returns a list of tuples in the form of (i, i.created) where i is a notification
 both the Users code and Others' code
 '''
 def collect_activity(dashboard_user):
-    #test this in the shell
     #TODO: how can i do this in one query?
     user_activity = Notification.objects.filter(recipient=dashboard_user).filter(reason='U')
     general_activity = Notification.objects.filter(recipient=dashboard_user).filter(reason='A')
@@ -114,25 +115,37 @@ def collect_activity(dashboard_user):
     return all_notifications
 
 '''
-Returns a list of comments with recent vote activity, with the comment with the most recent
+Returns a list of notifications in the form of (notification, notification.vote.modified) with the comment with the most recent
 vote activity at the end of the list.
 '''
 def collect_recent_votes(dashboard_user):
     votes_tuple_list = []
     votes_on_user = Notification.objects.filter(recipient=dashboard_user).filter(reason='V')
     for vote_notification in votes_on_user:
-        #this may be wrong... check the second part of the tuple
         votes_tuple_list.append((vote_notification, vote_notification.vote.modified))
     return votes_tuple_list
+
+
+'''
+Returns a list of notififcations
+'''
+def collect_all_notifications(dashboard_user):
+    notifications_list = []
+    all_notifications = Notification.objects.filter(recipient=dashboard_user)
+    for notification in all_notifications:
+        if notification.vote is not None:
+            notifications_list.append((notification, notification.vote.modified))
+        else:
+            notifications_list.append((notification, notification.created))
+    return notifications_list
+
 
 '''
 Returns a sorted list all of the list arguments by their time of modification or creation, depending on the object,
 where the 0 index is used for the earliest action. (votes use modification time, comments use creation time)
-@param comments_list - list generated from collect_comments_from_submissions
-@param replies_list - list generated from collect_replies_to_user
-@param comments_from_vote_list - list generated from collect_recent_votes
+@param *args - Any number of arguments passed in. Arguments should be a list of tuples in the form (notification,
+notification.created).
 '''
-#TODO: is *args better than passing in the big lists directly?
 def create_recent_activity_list(*args):
     list_of_lists = [i for i in args]
 
@@ -204,12 +217,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         return data
 
     submission_data = collect_submission_data(submissions)
-    #TODO: make sure this isn't too time intensive.
-    direct_comment_notifications = collect_comments_from_submissions(dashboard_user)
-    reply_notifications = collect_replies_to_user(dashboard_user)
-    vote_notifications = collect_recent_votes(dashboard_user)
-    activity_list = collect_activity(dashboard_user)
-    recent_activity_objects = create_recent_activity_list(direct_comment_notifications, reply_notifications, vote_notifications, activity_list)
+    recent_activity_objects = create_recent_activity_list(collect_all_notifications(dashboard_user))
 
     #get all the submissions that the user submitted, in previous semesters
     old_submissions = Submission.objects.filter(authors=dashboard_user) \
