@@ -126,8 +126,7 @@ def collect_recent_notifications(dashboard_user):
     other_notifications = []
     notification_number = 5
     new_notifications = list(Notification.objects.filter(recipient=dashboard_user, seen=False))
-
-#    new_notifications.sort(key = lambda x: x.vote.modified if (x.vote is not None) else x.created)
+    new_notifications.sort(key = lambda x: x.vote.modified if (x.vote is not None) else x.created)
     new_notifications.reverse()
     for notification in new_notifications:
         if notification.vote is not None:
