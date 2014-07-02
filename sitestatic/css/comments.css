@@ -107,7 +107,13 @@
 
 
 .comment-author-name.teacher:before {
-    content: url('../img/star.png');
+    content: url('../img/staralt_14x14.png');
+
+}
+
+.comment-author-name.teacher:before img {
+    width: 16px;
+    height: 16px;
 
 }
 
