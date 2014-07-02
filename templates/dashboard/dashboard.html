@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load extra_tags %}
 
 {% block css %}
 {{ block.super }}
@@ -139,7 +140,7 @@ $(document).ready(function() {
                                 <td class="note-on-what">
                                     <span>{{notification.comment.chunk.name}}</span>
                                     <br>
-                                    <span>{{notification.comment.created|timesince}} ago</span>
+                                    <span>{{notification.comment.created|timesince_human}} ago</span>
                                 </td>
                             </tr>
 
@@ -183,7 +184,7 @@ $(document).ready(function() {
                                 <td class="note-on-what">
                                     <span>{{notification.comment.chunk.name}}</span>
                                     <br>
-                                    <span>{{notification.comment.created|timesince}} ago</span>
+                                    <span>{{notification.comment.created|timesince_human}} ago</span>
                                 </td>
                             </tr>
                         {% endif %}
