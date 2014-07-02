@@ -128,7 +128,7 @@ def collect_recent_notifications(dashboard_user):
     new_notifications.sort(key = lambda x: x.vote.modified if (x.vote is not None) else x.created)
     new_notifications.reverse()
     for notification in new_notifications:
-        time = notification.vote.modified if (notification.vote is not None) else time = notification.created
+        (time = notification.vote.modified) if (notification.vote is not None) else (time = notification.created)
 
         if dashboard_user in notification.comment.chunk.file.submission.authors.all():
             if len(my_notifications) < notification_number:
