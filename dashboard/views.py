@@ -18,6 +18,7 @@ from notifications.models import Notification
 
 import datetime
 import sys
+import operator
 import logging
 
 #METHODS FOR URLS
@@ -124,11 +125,15 @@ def collect_recent_notifications(dashboard_user):
     my_notifications = []
     other_notifications = []
     notification_number = 5
-    new_notifications = Notification.objects.filter(recipient=dashboard_user, seen=False)
-    new_notifications.sort(key = lambda x: x.vote.modified if (x.vote is not None) else x.created)
+    new_notifications = list(Notification.objects.filter(recipient=dashboard_user, seen=False))
+
+#    new_notifications.sort(key = lambda x: x.vote.modified if (x.vote is not None) else x.created)
     new_notifications.reverse()
     for notification in new_notifications:
-        (time = notification.vote.modified) if (notification.vote is not None) else (time = notification.created)
+        if notification.vote is not None:
+            time = notification.vote.modified
+        else:
+            time = notification.created
 
         if dashboard_user in notification.comment.chunk.file.submission.authors.all():
             if len(my_notifications) < notification_number:
