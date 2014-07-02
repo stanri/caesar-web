@@ -107,7 +107,10 @@
 
 
 .comment-author-name.teacher:before {
-    content: "[T] ";
+    display: block;
+    background: url('../img/thumb-up.png') no-repeat !important;
+    width: 16px;
+    height: 16px;
 }
 
 .comment-author-name.volunteer {

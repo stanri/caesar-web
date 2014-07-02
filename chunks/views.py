@@ -100,9 +100,9 @@ def view_chunk(request, chunk_id):
             try:
                 task = Task.objects.filter(chunk=chunk)[0]
             except IndexError:
-                logging.debug("Chunk does not exist")
-                raise Http404
-                
+                # having a task = None doesn't break the view_chunk.html page.
+                pass
+
         last_task = False
 
     return render(request, 'chunks/view_chunk.html', {
