@@ -77,6 +77,7 @@ $(document).ready(function() {
         var activityType = this.id.split('-')[0]
         var comment_Id = this.id.split('-')[1];
         var chunk_Id = this.id.split('-')[2];
+        var notification_Id = this.id.split('-')[3]
 
         window.location = "/chunks/view/" + chunk_Id + "#" + activityType + "-" + comment_Id;
         return false;
@@ -109,10 +110,9 @@ $(document).ready(function() {
             <table class="my-recent-stream">
                 {% for notification, snippet in my_code_notifications %}
 
-                    {% if request.user in notification.comment.chunk.file.submission.authors.all%}
         <!--                Activity Picture, done in CSS-->
-                        <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}
-                                                  {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}
+                        <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
+                                                  {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
                                                   {% endif %}">
                             <td class="note-image">
                                 {% if notification.reason == 'V' %}
@@ -152,7 +152,6 @@ $(document).ready(function() {
                             </td>
                         </tr>
 
-                    {% endif %}
 
                 {% endfor %}
             </table>
@@ -160,9 +159,8 @@ $(document).ready(function() {
             <table class="others-recent-stream">
                 {% for notification, snippet in other_code_notifications %}
 
-                    {% if request.user not in notification.comment.chunk.file.submission.authors.all%}
-                        <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}
-                                                  {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}
+                        <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
+                                                  {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
                                                   {% endif %}">
                             <td class="note-image">
                                 {% if notification.reason == 'V' %}
@@ -201,7 +199,7 @@ $(document).ready(function() {
                                 <span class="grey-text">{{notification.comment.created|timesince_human}} ago</span>
                             </td>
                         </tr>
-                    {% endif %}
+
                 {% endfor %}
             </table>
 </div>

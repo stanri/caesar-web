@@ -5,6 +5,10 @@ div.assignment-header {
     padding-top: 2em;
 }
 
+td [class*='note-']{
+    color:pink !important;
+}
+
 .note-line{
     border-bottom: 1px solid #aaa;
     position: relative;
@@ -242,5 +246,7 @@ span.image-U, .image-A{
     width: 18%;
     text-align: right;
 }
+
+
 
 
