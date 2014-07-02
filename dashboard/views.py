@@ -146,6 +146,25 @@ def collect_recent_notifications(dashboard_user):
 
     return my_notifications, other_notifications
 
+
+'''
+Alternate method to collect recent notifications. Can also get all notifications by setting maxNotifications to infinity or some large number.
+Returns two lists with notifications on user's code and notificaitons on others' code as tuples with associated snippets.
+'''
+def get_recent_notifications(dashboard_user, maxNotifications = 5):
+    my_notifications = []
+    other_notifications = []
+    new_notifications = Notification.objects.filter(recipient=dashboard_user, seen=False).order_by('-created')
+    for notification in new_notifications:
+        authors = notification.submission.authors.all()
+        if len(my_notifications) < maxNotifications and dashboard_user in authors:
+            my_notifications.append(notification)
+        if len(other_notifications) < maxNotifications and dashboard_user not in authors:
+            other_notifications.append(notification)
+        if len(my_notifications) >= maxNotifications and len(other_notifications) >= maxNotifications:
+            break
+    return add_snippets(my_notifications), add_snippets(other_notifications)
+
 '''
 Returns a list of all notififcations for a user.
 '''
@@ -158,6 +177,22 @@ def collect_all_notifications(dashboard_user):
         else:
             notifications_list.append((notification, notification.created))
     return notifications_list
+
+
+'''
+Turns a list of notifications into list of tuples (notification, snippet)
+'''
+def add_snippets(notifications):
+    notifications_with_snippets = []
+    snippet_max_len = 100
+    for notif in notifications:
+        snippet = "Snippet not found."
+        if notif.comment is not None: #this should always happen, unless notification has no comment for whatever reason
+            snippet = notif.comment.chunk.generate_snippet(notif.comment.start, notif.comment.end)
+            if len(snippet) > snippet_max_len:
+                snippet = snippet[:snippet_max_len]
+        notifications_with_snippets.append( (notif,snippet) )
+    return notifications_with_snippets
 
 
 '''
@@ -176,16 +211,8 @@ def create_recent_activity_list(*args):
     #sorts the list by the time entry in the second position of each tuple.
     recent_activity_tuple.sort(key = lambda object_time_tuple: object_time_tuple[1])
 
-    #Now that sorting is done, create a list of just the notification objects.
-    recent_activity = []
-    snippet_max_len = 100
-    for i in recent_activity_tuple:
-        snippet = "Snippet not found."
-        if i[0].comment is not None:
-            snippet = i[0].comment.chunk.generate_snippet(i[0].comment.start, i[0].comment.end)
-            if len(snippet) > snippet_max_len:
-                snippet = snippet[:snippet_max_len]
-        recent_activity.append( (i[0],snippet) )
+    #Now that sorting is done, create a list of just the notification objects with snippets
+    recent_activity = add_snippets([i[0] for i in recent_activity_tuple] )
     return recent_activity[::-1] #we reverse the list, because the list has 0 index as earliest action.
 
 def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_more_tasks = False):
@@ -237,10 +264,8 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         return data
 
     submission_data = collect_submission_data(submissions)
-    my_code_notifications_tmp, other_code_notifications_tmp = collect_recent_notifications(dashboard_user)
+    my_code_notifications, other_code_notifications = get_recent_notifications(dashboard_user)
     recent_activity_objects = create_recent_activity_list(collect_all_notifications(dashboard_user))
-    my_code_notifications = create_recent_activity_list(my_code_notifications_tmp)
-    other_code_notifications = create_recent_activity_list(other_code_notifications_tmp)
 
     #get all the submissions that the user submitted, in previous semesters
     old_submissions = Submission.objects.filter(authors=dashboard_user) \
