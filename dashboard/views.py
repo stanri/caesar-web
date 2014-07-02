@@ -133,7 +133,7 @@ def collect_all_notifications(dashboard_user):
 
 '''
 Returns a sorted list all of the list arguments by their time of modification or creation, depending on the object,
-where the 0 index is used for the earliest action. (votes use modification time, comments use creation time)
+where the 0 index is used for the latest action. (votes use modification time, comments use creation time)
 @param *args - Any number of arguments passed in. Arguments should be a list of tuples in the form (notification,
 notification.created).
 '''
@@ -157,7 +157,7 @@ def create_recent_activity_list(*args):
             if len(snippet) > snippet_max_len:
                 snippet = snippet[:snippet_max_len]
         recent_activity.append( (i[0],snippet) )
-    return recent_activity
+    return recent_activity[::-1] #we reverse the list, because the list has 0 index as earliest action.
 
 def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_more_tasks = False):
     def annotate_tasks_with_counts(tasks):
