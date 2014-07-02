@@ -116,9 +116,34 @@ def collect_recent_votes(dashboard_user):
         votes_tuple_list.append((vote_notification, vote_notification.vote.modified))
     return votes_tuple_list
 
+'''
+Returns a list of the five most recent and unseen notifications on the users' code and a list of the five most recent
+and unseen notifications on others' code that the user is related to.
+'''
+def collect_recent_notifications(dashboard_user):
+    my_notifications = []
+    other_notifications = []
+    notification_number = 5
+    new_notifications = Notification.objects.filter(recipient=dashboard_user, seen=False)
+    new_notifications.sort(key = lambda x: x.vote.modified if (x.vote is not None) else x.created)
+    new_notifications.reverse()
+    for notification in new_notifications:
+        time = notification.vote.modified if (notification.vote is not None) else time = notification.created
+
+        if dashboard_user in notification.comment.chunk.file.submission.authors.all():
+            if len(my_notifications) < notification_number:
+                my_notifications.append((notification, time))
+        else:
+            if len(other_notifications) < notification_number:
+                other_notifications.append((notification, time))
+
+        if len(my_notifications) < notification_number and len(other_notifications) < notification_number:
+            break
+
+    return my_notifications, other_notifications
 
 '''
-Returns a list of notififcations
+Returns a list of all notififcations for a user.
 '''
 def collect_all_notifications(dashboard_user):
     notifications_list = []
@@ -208,7 +233,10 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         return data
 
     submission_data = collect_submission_data(submissions)
+    my_code_notifications_tmp, other_code_notifications_tmp = collect_recent_notifications(dashboard_user)
     recent_activity_objects = create_recent_activity_list(collect_all_notifications(dashboard_user))
+    my_code_notifications = create_recent_activity_list(my_code_notifications_tmp)
+    other_code_notifications = create_recent_activity_list(other_code_notifications_tmp)
 
     #get all the submissions that the user submitted, in previous semesters
     old_submissions = Submission.objects.filter(authors=dashboard_user) \
@@ -258,6 +286,8 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         'allow_requesting_more_tasks': allow_requesting_more_tasks,
         'recent_activity_objects': recent_activity_objects,
         'current_slack_data': current_slack_data,
+        'my_code_notifications': my_code_notifications,
+        'other_code_notifications': other_code_notifications,
     })
 
 
