@@ -77,7 +77,7 @@ $(document).ready(function() {
         var activityType = this.id.split('-')[0]
         var comment_Id = this.id.split('-')[1];
         var chunk_Id = this.id.split('-')[2];
-        
+
         window.location = "/chunks/view/" + chunk_Id + "#" + activityType + "-" + comment_Id;
         return false;
     });
@@ -105,7 +105,7 @@ $(document).ready(function() {
         <a href="{% url 'dashboard.views.all_activity' %}"> See all activity </a>
       </div>
 
-        <h3>My Code</h3>
+        <h3 class='recent-activity-small-header'>my code</h3>
             <table class="my-recent-stream">
                 {% for notification, snippet in my_code_notifications %}
 
@@ -115,7 +115,15 @@ $(document).ready(function() {
                                                   {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}
                                                   {% endif %}">
                             <td class="note-image">
-                                <span class="image-{{notification.reason}}"></span>
+                                {% if notification.reason == 'V' %}
+                                    {% if notification.vote.value == 1 %}
+                                        <span class="image-{{notification.reason}}-plus"></span>
+                                    {% elif notification.vote.value == -1 %}
+                                        <span class="image-{{notification.reason}}-minus"></span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="image-{{notification.reason}}"></span>
+                                {% endif %}
                             </td>
         <!--                Info on the activity and chunk-->
                             <td class="note-activity">
@@ -148,7 +156,7 @@ $(document).ready(function() {
 
                 {% endfor %}
             </table>
-        <h3>Others' Code</h3>
+        <h3 class='recent-activity-small-header'>others' code</h3>
             <table class="others-recent-stream">
                 {% for notification, snippet in other_code_notifications %}
 
@@ -157,7 +165,15 @@ $(document).ready(function() {
                                                   {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}
                                                   {% endif %}">
                             <td class="note-image">
-                                <span class="image-{{notification.reason}}"></span>
+                                {% if notification.reason == 'V' %}
+                                    {% if notification.vote.value == 1 %}
+                                        <span class="image-{{notification.reason}}-plus"></span>
+                                    {% elif notification.vote.value == -1 %}
+                                        <span class="image-{{notification.reason}}-minus"></span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="image-{{notification.reason}}"></span>
+                                {% endif %}
                             </td>
         <!--                Info on the activity and chunk-->
                             <td class="note-activity">
