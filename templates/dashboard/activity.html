@@ -1,15 +1,17 @@
 {% extends "base.html" %}
+{% load extra_tags %}
 
 {% block css %}
 {{ block.super }}
-<link rel="stylesheet" href="{{ STATIC_URL }}css/activity.css" type="text/css" />
+
+<link rel="stylesheet" href="{{ STATIC_URL }}css/dashboard.css" type="text/css" />
 {% endblock %}
 
 {% block js %}
 {{ block.super }}
 <script>
 
-<!-- TODO: javascript stuff here -->
+//<!-- TODO: javascript stuff here -->
 
 </script>
 {% endblock %}
@@ -25,90 +27,105 @@
 
 {% block content %}
 
-<div class='span12 all-activity'>
-    <h2 class='all-activity-header'>All Activity</h2>
-        
-        <h3>My Code</h3>
+<div class='span12 recent-activity'>
+    <h2 class='recent-activity-header'>all activity</h2>
+
+        <h3 class='recent-activity-small-header'>my code</h3>
             <table class="my-recent-stream">
-                {% for notification, snippet in recent_activity_objects %} 
-                    {% if notification.seen == False %}
-
-                        {% if notification.comment.chunk.author.username == request.user.username %}
-            <!--                Activity Picture, done in CSS-->
-                            <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}
-                                                      {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}
-                                                      {% endif %}ALL">
-                                <td class="note-image">
+                {% for notification, snippet in my_code_notifications_all %}
+                <span>{{notification.reason}}</span>
+<!--                TODO: NOTIFICATION IS NOT READING CORRECTLY-->
+        <!--                Activity Picture, done in CSS-->
+                        <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
+                                                  {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
+                                                  {% endif %}_all">
+                            <td class="note-image">
+                                {% if notification.reason == 'V' %}
+                                    {% if notification.vote.value == 1 %}
+                                        <span class="image-{{notification.reason}}-plus"></span>
+                                    {% elif notification.vote.value == -1 %}
+                                        <span class="image-{{notification.reason}}-minus"></span>
+                                    {% endif %}
+                                {% else %}
                                     <span class="image-{{notification.reason}}"></span>
-                                </td>
-            <!--                Info on the activity and chunk-->
-                                <td class="note-activity">
-                                    {% if notification.reason == "C" %}
-                                    <span>{{notification.comment.author}} commented on your code!</span>
-                                    {% endif %}
-                                    {% if notification.reason == "R" %}
-                                        <span>{{notification.comment.author}} replied to your comment!</span>
-                                    {% endif %}
-                                    {% if notification.reason == "V" %}
-                                        <span>Someone voted on your comment!</span>
-                                    {% endif %}
-                                    {% if notification.reason == "U" %}
-                                        <span>There is activity on your code!</span>
-                                    {% endif %}
-                                </td>
-                                <td class="note-comment">
-                                    <span>{{notification.comment}}</span>
-                                    <br>
-                                    <span class="grey-text">{{snippet}}</span>
-                                </td>
-                                <td class="note-on-what">
-                                    <span>{{notification.comment.chunk.name}}</span>
-                                </td>
-                            </tr>
-                            
-                        {% endif %}
+                                {% endif %}
+                            </td>
+        <!--                Info on the activity and chunk-->
+                            <td class="note-activity">
+                                {% if notification.reason == "C" %}
+                                <span>{{notification.comment.author}} commented on your code!</span>
+                                {% endif %}
+                                {% if notification.reason == "R" %}
+                                    <span>{{notification.comment.author}} replied to your comment!</span>
+                                {% endif %}
+                                {% if notification.reason == "V" %}
+                                    <span>Someone voted on your comment!</span>
+                                {% endif %}
+                                {% if notification.reason == "U" %}
+                                    <span>Activity on your code!</span>
+                                {% endif %}
+                            </td>
+                            <td class="note-comment">
+                                <span>{{notification.comment}}</span>
+                                <br>
+                                <span class="grey-text">{{snippet}}</span>
+                            </td>
+                            <td class="note-on-what">
+                                <span>{{notification.comment.chunk.name}}</span>
+                                <br>
+                                <span class="grey-text">{{notification.comment.created}} ago</span>
+                            </td>
+                        </tr>
 
-                    {% endif %}
-                {% endfor %}    
+
+                {% endfor %}
             </table>
-        <h3>Others' Code</h3>
+        <h3 class='recent-activity-small-header'>others' code</h3>
             <table class="others-recent-stream">
-                {% for notification, snippet in recent_activity_objects %} 
-                    {% if notification.seen == False %}
-                
-                        {% if notification.comment.chunk.author.username != request.user.username %}
-                            <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}
-                                                      {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}
-                                                      {% endif %}ALL">
-                                <td class="note-image">
-                                    <span class="image-{{notification.reason}}"></span>
-                                </td>
-            <!--                Info on the activity and chunk-->
-                                <td class="note-activity">
-                                    {% if notification.reason == "A" %}
-                                        <span>There is activity on {{notification.comment.chunk.file.submission.authors.all}}'s code!</span>
-                                    {% endif %}
-                                    {% if notification.reason == "R" %}
-                                        <span>{{notification.comment.author}} replied to your comment!</span>
-                                    {% endif %}
-                                    {% if notification.reason == "V" %}
-                                        <span>Someone voted on your comment!</span>
-                                    {% endif %}
+                {% for notification, snippet in other_code_notifications_all %}
 
-                                </td>
-                                <td class="note-comment">
-                                    <span>{{notification.comment}}</span>
-                                    <br>
-                                    <span class="grey-text">{{snippet}}</span>
-                                </td>
-                                <td class="note-on-what">
-                                    <span>{{notification.comment.chunk.name}}</span>
-                                </td>
-                            </tr>
-                        {% endif %}
-                    {% endif %}
+                        <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
+                                                  {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
+                                                  {% endif %}_all">
+                            <td class="note-image">
+                                {% if notification.reason == 'V' %}
+                                    {% if notification.vote.value == 1 %}
+                                        <span class="image-{{notification.reason}}-plus"></span>
+                                    {% elif notification.vote.value == -1 %}
+                                        <span class="image-{{notification.reason}}-minus"></span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="image-{{notification.reason}}"></span>
+                                {% endif %}
+                            </td>
+        <!--                Info on the activity and chunk-->
+                            <td class="note-activity">
+                                {% if notification.reason == "A" %}
+                                    <span>Activity on {% for user in notification.comment.chunk.file.submission.authors.all %}
+                                        <span>{{user.username}}'s </span>
+                                        {% endfor %} code!</span>
+                                {% endif %}
+                                {% if notification.reason == "R" %}
+                                    <span>{{notification.comment.author}} replied to your comment!</span>
+                                {% endif %}
+                                {% if notification.reason == "V" %}
+                                    <span>Someone voted on your comment!</span>
+                                {% endif %}
+
+                            </td>
+                            <td class="note-comment">
+                                <span>{{notification.comment}}</span>
+                                <br>
+                                <span class="grey-text">{{snippet}}</span>
+                            </td>
+                            <td class="note-on-what">
+                                <span>{{notification.comment.chunk.name}}</span>
+                                <br>
+                                <span class="grey-text">{{notification.comment.created}} ago</span>
+                            </td>
+                        </tr>
+
                 {% endfor %}
             </table>
 </div>
-
 {% endblock %}

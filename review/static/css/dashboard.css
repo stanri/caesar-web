@@ -193,10 +193,18 @@ span.image-C, span.image-R{
     height: 16px;
 }
 
-span.image-V{
+span.image-V-plus{
     font-family: sans-serif;
     display: block;
     background: url('../img/thumb-up.png') no-repeat !important;
+    width: 16px;
+    height: 16px;
+}
+
+span.image-V-minus{
+    font-family: sans-serif;
+    display: block;
+    background: url('../img/thumb-down.png') no-repeat !important;
     width: 16px;
     height: 16px;
 }
@@ -209,8 +217,21 @@ span.image-U, .image-A{
     height: 16px;
 }
 
-div.all-activity-link {
+.recent-activity-header {
+    text-align: left;
+    display: inline-block;
+    width: 50%;
+    margin-bottom: 0px;
+}
+
+.recent-activity-small-header {
+    margin: 0px;
+}
+
+.all-activity-link {
     text-align: right;
+    display: inline-block;
+    width: 49.6%;
 }
 
 .note-activity{
