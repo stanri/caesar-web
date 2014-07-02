@@ -154,6 +154,7 @@ def create_recent_activity_list(*args):
     return recent_activity[::-1] #we reverse the list, because the list has 0 index as earliest action.
 
 ## End of unused methods
+## 
 
 '''
 Returns a list of the five most recent and unseen notifications on the users' code and a list of the five most recent
@@ -162,7 +163,8 @@ and unseen notifications on others' code that the user is related to.
 def get_recent_notifications(dashboard_user, maxNotifications = 5):
     my_notifications = []
     other_notifications = []
-    new_notifications = Notification.objects.filter(recipient=dashboard_user, seen=False).order_by('-created')
+    #using prefetch_related because submission can have MULTIPLE authors (many-to-one not supported by select_related)
+    new_notifications = Notification.objects.filter(recipient=dashboard_user, seen=False).order_by('-created').prefetch_related('submission__authors')
     for notification in new_notifications:
         authors = notification.submission.authors.all()
         if len(my_notifications) < maxNotifications and dashboard_user in authors:
