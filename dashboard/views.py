@@ -122,7 +122,7 @@ Returns a list of notififcations
 '''
 def collect_all_notifications(dashboard_user):
     notifications_list = []
-    all_notifications = Notification.objects.filter(recipient=dashboard_user)
+    all_notifications = Notification.objects.filter(recipient=dashboard_user).select_related('comment').select_related('chunk').select_related('file').select_related('submission').select_related('authors')
     for notification in all_notifications:
         if notification.vote is not None:
             notifications_list.append((notification, notification.vote.modified))
