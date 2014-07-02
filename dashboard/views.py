@@ -121,36 +121,6 @@ def collect_recent_votes(dashboard_user):
 Returns a list of the five most recent and unseen notifications on the users' code and a list of the five most recent
 and unseen notifications on others' code that the user is related to.
 '''
-def collect_recent_notifications(dashboard_user):
-    my_notifications = []
-    other_notifications = []
-    notification_number = 5
-    new_notifications = list(Notification.objects.filter(recipient=dashboard_user, seen=False))
-    new_notifications.sort(key = lambda x: x.vote.modified if (x.vote is not None) else x.created)
-    new_notifications.reverse()
-    for notification in new_notifications:
-        if notification.vote is not None:
-            time = notification.vote.modified
-        else:
-            time = notification.created
-
-        if dashboard_user in notification.comment.chunk.file.submission.authors.all():
-            if len(my_notifications) < notification_number:
-                my_notifications.append((notification, time))
-        else:
-            if len(other_notifications) < notification_number:
-                other_notifications.append((notification, time))
-
-        if len(my_notifications) < notification_number and len(other_notifications) < notification_number:
-            break
-
-    return my_notifications, other_notifications
-
-
-'''
-Alternate method to collect recent notifications. Can also get all notifications by setting maxNotifications to infinity or some large number.
-Returns two lists with notifications on user's code and notificaitons on others' code as tuples with associated snippets.
-'''
 def get_recent_notifications(dashboard_user, maxNotifications = 5):
     my_notifications = []
     other_notifications = []
