@@ -289,6 +289,10 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         'other_code_notifications': other_code_notifications,
     })
 
-
-
+def notificationSeen(request):
+    logging.debug("hello world")
+    noteID = request.POST("id")
+    note = Notification.objects.filter(id=noteID)
+    note.seen = True
+    note.save()
 

@@ -3,6 +3,7 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('dashboard.views',
     (r'^$', 'dashboard'),
     (r'^dashboard/(?P<username>\w+)', 'student_dashboard'),
-    (r'^activity', 'all_activity')
+    (r'^activity', 'all_activity'),
+    (r'^notificationSeen', 'notificationSeen')
 )
 

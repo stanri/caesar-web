@@ -77,9 +77,11 @@ $(document).ready(function() {
         var activityType = this.id.split('-')[0]
         var comment_Id = this.id.split('-')[1];
         var chunk_Id = this.id.split('-')[2];
-        var notification_Id = this.id.split('-')[3]
+        var notificationID = this.id.split('-')[3]
         
-        window.location = "/chunks/view/" + chunk_Id + "#" + activityType + "-" + comment_Id;
+        $.post(caesar.urls.notificationSeen, {id: notificationID,} ); 
+        
+//        window.location = "/chunks/view/" + chunk_Id + "#" + activityType + "-" + comment_Id;
         return false;
     });
 
