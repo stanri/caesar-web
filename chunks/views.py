@@ -97,7 +97,10 @@ def view_chunk(request, chunk_id):
         task = None
         if user.is_staff:
             # this is super hacky and it's only here to allow admins to view chunks like a student
-            task = Task.objects.filter(chunk=chunk)[0]
+            try:
+                task = Task.objects.filter(chunk=chunk)[0]
+            except IndexError:
+                console.log("No chunk to view")
         last_task = False
 
     return render(request, 'chunks/view_chunk.html', {
