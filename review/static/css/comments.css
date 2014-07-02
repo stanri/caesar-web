@@ -105,16 +105,8 @@
     color: #482 !important;
 }
 
-
-.comment-author-name.teacher:before {
-    content: url('../img/staralt_14x14.png');
-
-}
-
-.comment-author-name.teacher:before img {
-    width: 16px;
-    height: 16px;
-
+.comment-author-icon.teacher {
+    content: url('../img/staralt_comments.png');
 }
 
 .comment-author-name.volunteer {
@@ -125,16 +117,12 @@
     color: #ff3636 !important;
 }
 
-.comment-author-name.volunteer:before {
-    content: "[V] ";
+.comment-author-icon.volunteer {
+    content: url('../img/staralt_comments.png');
 }
 
 .comment-author-name.student {
     color: #66f;
-}
-
-.comment-author-name.student:before {
-    content: "[S] ";
 }
 
 .collapsed .comment-author {
