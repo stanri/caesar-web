@@ -27,7 +27,6 @@ $(document).ready(function() {
 
 {% block breadcrumbs %}
   <a class="breadcrumb first-breadcrumb" href="{% url 'dashboard.views.dashboard' %}">Dashboard</a>
-  <span class="breadcrumb">all activity</span>
 {% endblock %}
 
 {% block secondary-toolbar %}
@@ -83,7 +82,7 @@ $(document).ready(function() {
                             <td class="note-on-what">
                                 <span>{{notification.comment.chunk.name}}</span>
                                 <br>
-                                <span class="grey-text">{{notification.comment.created|timesince_human}} ago</span>
+                                <span class="grey-text">{{notification.created|timesince_human}} ago</span>
                             </td>
                         </tr>
 
@@ -130,7 +129,7 @@ $(document).ready(function() {
                             <td class="note-on-what">
                                 <span>{{notification.comment.chunk.name}}</span>
                                 <br>
-                                <span class="grey-text">{{notification.comment.created|timesince_human}} ago</span>
+                                <span class="grey-text">{{notification.created|timesince_human}} ago</span>
                             </td>
                         </tr>
                 {% endfor %}
