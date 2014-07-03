@@ -154,7 +154,7 @@ def create_recent_activity_list(*args):
     return recent_activity[::-1] #we reverse the list, because the list has 0 index as earliest action.
 
 ## End of unused methods
-## 
+##
 
 '''
 Returns a list of the five most recent and unseen notifications on the users' code and a list of the five most recent
@@ -176,7 +176,7 @@ def get_recent_notifications(dashboard_user, maxNotifications = 5):
     return add_snippets(my_notifications), add_snippets(other_notifications)
 
 '''
-Turns a list of notifications into list of tuples (notification, snippet)
+Turns a list of notifications into list of tuples in the form (notification, snippet).
 '''
 def add_snippets(notifications):
     notifications_with_snippets = []
@@ -189,8 +189,6 @@ def add_snippets(notifications):
                 snippet = snippet[:snippet_max_len]
         notifications_with_snippets.append( (notif,snippet) )
     return notifications_with_snippets
-
-
 
 def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_more_tasks = False):
     def annotate_tasks_with_counts(tasks):
