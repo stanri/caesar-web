@@ -66,7 +66,7 @@ def dashboard(request):
 @login_required
 def all_activity(request):
     user = request.user
-    maxNotifications = 1000 #should be more than enough to get all the 
+    maxNotifications = 1000 #should be more than enough to get all the
     my_code_notifications_all, other_code_notifications_all = get_recent_notifications(user, maxNotifications)
     return render(request, 'dashboard/activity.html', {
         'my_code_notifications_all': my_code_notifications_all,
@@ -169,7 +169,6 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
 
     submission_data = collect_submission_data(submissions)
     my_code_notifications, other_code_notifications = get_recent_notifications(dashboard_user)
-    recent_activity_objects = create_recent_activity_list(collect_all_notifications(dashboard_user))
 
     #get all the submissions that the user submitted, in previous semesters
     old_submissions = Submission.objects.filter(authors=dashboard_user) \
@@ -217,7 +216,6 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         'old_submission_data': old_submission_data,
         'current_milestone_data': current_milestone_data,
         'allow_requesting_more_tasks': allow_requesting_more_tasks,
-        'recent_activity_objects': recent_activity_objects,
         'current_slack_data': current_slack_data,
         'my_code_notifications': my_code_notifications,
         'other_code_notifications': other_code_notifications,
