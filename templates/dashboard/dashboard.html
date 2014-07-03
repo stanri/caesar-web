@@ -73,12 +73,15 @@ $(document).ready(function() {
         },"json");
     });
 
+    //for recent activities, if you click on a row, you get sent to the place where the notification originated 
     $('.note-line').click(function(e){
-        var activityType = this.id.split('-')[0]
+        var activityType = this.id.split('-')[0];
         var comment_Id = this.id.split('-')[1];
         var chunk_Id = this.id.split('-')[2];
-        $.post(caesar.urls.notificationSeen, {id: notificationID,} ); 
-        window.location = "/chunks/view/" + chunk_Id + "#" + activityType + "-" + comment_Id;
+        var notificationID = this.id.split('-')[3];
+        $.post(caesar.urls.notificationSeen, {notification_id: notificationID,} ); 
+        console.log("click");
+        window.open ("/chunks/view/" + chunk_Id + "#" + activityType + "-" + comment_Id);
         return false;
     });
 

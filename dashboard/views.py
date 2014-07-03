@@ -21,6 +21,18 @@ import sys
 import operator
 import logging
 
+
+@login_required
+def notificationSeen(request):
+    if request.method == "POST":
+        noteID = request.POST["notification_id"]
+        note = Notification.objects.filter(id=noteID)
+        note.seen = True
+        note.save()
+    
+    return HttpResponse("ASDFGHJKL")
+
+
 #METHODS FOR URLS
 @login_required
 def dashboard(request):
@@ -293,11 +305,4 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         'my_code_notifications': my_code_notifications,
         'other_code_notifications': other_code_notifications,
     })
-
-def notificationSeen(request):
-    logging.debug("hello world")
-    noteID = request.POST("id")
-    note = Notification.objects.filter(id=noteID)
-    note.seen = True
-    note.save()
 
