@@ -29,7 +29,7 @@ def notificationSeen(request):
         note = Notification.objects.filter(id=noteID)
         note.seen = True
         note.save()
-    
+
     return HttpResponse("ASDFGHJKL")
 
 
@@ -45,6 +45,7 @@ def dashboard(request):
          duedate__gt=datetime.datetime.now(), assignment__semester__members__user=user).all()
     for review_milestone in live_review_milestones:
         current_tasks = user.tasks.filter(milestone=review_milestone)
+        active_sub = Submission.objects.filter(authors=user, milestone=review_milestone.submit_milestone)
         active_sub = Submission.objects.filter(authors=user, milestone=review_milestone.submit_milestone)
         try:
             membership = Member.objects.get(user=user, semester=review_milestone.assignment.semester)
@@ -147,7 +148,7 @@ def collect_all_notifications(dashboard_user):
 '''
 Returns a sorted list all of the list arguments by their time of modification or creation, depending on the object,
 where the 0 index is used for the latest action. (votes use modification time, comments use creation time)
-@param *args - Any number of arguments passed in. Arguments should be a list of tuples in the form (notification,
+*args - Any number of arguments passed in. Arguments should be a list of tuples in the form (notification,
 notification.created).
 '''
 def create_recent_activity_list(*args):
@@ -202,6 +203,8 @@ def add_snippets(notifications):
         notifications_with_snippets.append( (notif,snippet) )
     return notifications_with_snippets
 
+#TODO: dashboard_user is the user's dashboard the logged in user is viewing. go over these
+#calls to it and see if request.user (logged in user) should be used instead.
 def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_more_tasks = False):
     def annotate_tasks_with_counts(tasks):
         return tasks.annotate(comment_count=Count('chunk__comments', distinct=True),
@@ -238,7 +241,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
 
     '''
     Gathers data from submissions of a user, including comments and number of reviewers on those submissions.
-    @attr - submissions - QuerySet of submissions.
+    submissions - QuerySet of submissions.
     '''
     def collect_submission_data(submissions):
         data = []
