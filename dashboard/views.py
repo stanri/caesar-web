@@ -66,7 +66,7 @@ def dashboard(request):
 def all_activity(request):
     user = request.user
     maxNotifications = 1000 #should be more than enough to get all the
-    my_code_notifications_all, other_code_notifications_all = get_recent_notifications(user, maxNotifications)
+    my_code_notifications_all, other_code_notifications_all = get_recent_notifications(user, maxNotifications, False)
     return render(request, 'dashboard/activity.html', {
         'my_code_notifications_all': my_code_notifications_all,
         'other_code_notifications_all': other_code_notifications_all
@@ -80,16 +80,21 @@ def student_dashboard(request, username):
         raise Http404
     return dashboard_for(request, other_user)
 
-def get_recent_notifications(dashboard_user, maxNotifications = 5):
+def get_recent_notifications(dashboard_user, maxNotifications = 5, filter_for_unseen = True):
     '''
     Returns most recent unseen notifications on the users' code and others' code related to the user.
     Returns TWO lists of tuples (notification, code snippet)
-    Can change maxNotifications to get all notifications as well.
+    dashboard_user - the user we're seeing the dashboard of, NOT the logged in user
+    maxNotifications - the maximum number of notifications in each generated list
+    filter_for_unseen - if True, we look for notifications that have not been marked as seen yet. If False, we get all notifications for the dashboard_user, regardless of their seen property.
     '''
     my_notifications = []
     other_notifications = []
-    #using prefetch_related because submission can have MULTIPLE authors (many-to-one not supported by select_related)
-    new_notifications = Notification.objects.filter(recipient=dashboard_user, seen=False).order_by('-created').prefetch_related('submission__authors')
+    if filter_for_unseen:
+        #using prefetch_related because submission can have MULTIPLE authors (many-to-one not supported by select_related)
+        new_notifications = Notification.objects.filter(recipient=dashboard_user, seen=False).order_by('-created').prefetch_related('submission__authors')
+    else:
+        new_notifications = Notification.objects.filter(recipient=dashboard_user).order_by('-created').prefetch_related('submission__authors')
     for notification in new_notifications:
         authors = notification.submission.authors.all()
         if len(my_notifications) < maxNotifications and dashboard_user in authors:
