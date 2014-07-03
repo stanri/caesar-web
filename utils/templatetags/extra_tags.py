@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 from django import template
 from django.utils.translation import ugettext, ungettext
@@ -7,6 +8,9 @@ register = template.Library()
 
 @register.filter(name='timesince_human')
 def humanize_timesince(date):
+    if not isinstance(date, datetime.datetime):
+        return "Invalid date"
+        
     delta = datetime.datetime.now() - date
 
     num_years = delta.days / 365
