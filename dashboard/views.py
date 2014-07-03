@@ -27,7 +27,7 @@ def notificationSeen(request):
     if request.method == "POST":
         noteID = request.POST["notification_id"]
         note = Notification.objects.get(id=noteID)
-        if note.recipient.user == request.user:
+        if note.recipient == request.user:
             note.seen = True
             note.save()
 
