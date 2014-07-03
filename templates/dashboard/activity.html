@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% load extra_tags %}
 
 {% block css %}
 {{ block.super }}
-<link rel="stylesheet" href="{{ STATIC_URL }}css/activity.css" type="text/css" />
+
+<link rel="stylesheet" href="{{ STATIC_URL }}css/dashboard.css" type="text/css" />
 {% endblock %}
 
 {% block js %}
@@ -26,19 +28,29 @@
 {% block content %}
 
 
-<div class='span12 all-activity'>
-    <h2 class='recent-activity-header'>All activity</h2>
-        <h3>My Code</h3>
+<div class='span12 recent-activity'>
+    <h2 class='recent-activity-header'>all activity</h2>
+
+        <h3 class='recent-activity-small-header'>my code</h3>
             <table class="my-recent-stream">
                 {% for notification, snippet in my_code_notifications_all %}
-
-                    {% if request.user in notification.comment.chunk.file.submission.authors.all%}
+                <span>{{notification.reason}}</span>
+<!--                TODO: NOTIFICATION IS NOT READING CORRECTLY-->
         <!--                Activity Picture, done in CSS-->
-                        <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}
-                                                  {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}
-                                                  {% endif %}">
+                        <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
+                                                  {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
+                                                  {% endif %}_all">
                             <td class="note-image">
-                                <span class="image-{{notification.reason}}"></span>
+                                {% if notification.reason == 'V' %}
+                                    {% if notification.vote.value == 1 %}
+                                        <span class="image-{{notification.reason}}-plus"></span>
+                                    {% elif notification.vote.value == -1 %}
+                                        <span class="image-{{notification.reason}}-minus"></span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="image-{{notification.reason}}"></span>
+                                {% endif %}
+
                             </td>
         <!--                Info on the activity and chunk-->
                             <td class="note-activity">
@@ -63,24 +75,47 @@
                             <td class="note-on-what">
                                 <span>{{notification.comment.chunk.name}}</span>
                                 <br>
+<<<<<<< HEAD
                                 <span class="grey-text">{{notification.comment.created|timesince_human}} ago</span>
                             </td>
                         </tr>
 
                     {% endif %}
+=======
+                                <span class="grey-text">{{notification.comment.created}} ago</span>
+                            </td>
+                        </tr>
+
+>>>>>>> a9d083c6d84b010ee5357afb0923e35318846edb
 
                 {% endfor %}
             </table>
-        <h3>Others' Code</h3>
+        <h3 class='recent-activity-small-header'>others' code</h3>
             <table class="others-recent-stream">
                 {% for notification, snippet in other_code_notifications_all %}
 
+<<<<<<< HEAD
                     {% if request.user not in notification.comment.chunk.file.submission.authors.all%}
                         <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}
                                                   {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}
                                                   {% endif %}">
                             <td class="note-image">
                                 <span class="image-{{notification.reason}}"></span>
+=======
+                        <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
+                                                  {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
+                                                  {% endif %}_all">
+                            <td class="note-image">
+                                {% if notification.reason == 'V' %}
+                                    {% if notification.vote.value == 1 %}
+                                        <span class="image-{{notification.reason}}-plus"></span>
+                                    {% elif notification.vote.value == -1 %}
+                                        <span class="image-{{notification.reason}}-minus"></span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="image-{{notification.reason}}"></span>
+                                {% endif %}
+>>>>>>> a9d083c6d84b010ee5357afb0923e35318846edb
                             </td>
         <!--                Info on the activity and chunk-->
                             <td class="note-activity">
@@ -105,6 +140,7 @@
                             <td class="note-on-what">
                                 <span>{{notification.comment.chunk.name}}</span>
                                 <br>
+<<<<<<< HEAD
                                 <span class="grey-text">{{notification.comment.created|timesince_human}} ago</span>
                             </td>
                         </tr>
@@ -115,3 +151,13 @@
 
 
 {% endblock %}
+=======
+                                <span class="grey-text">{{notification.comment.created}} ago</span>
+                            </td>
+                        </tr>
+
+                {% endfor %}
+            </table>
+</div>
+{% endblock %}
+>>>>>>> a9d083c6d84b010ee5357afb0923e35318846edb
