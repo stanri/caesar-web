@@ -11,7 +11,7 @@
 {{ block.super }}
 <script>
 
-//<!-- TODO: javascript stuff here -->
+// TODO: javascript stuff here
 
 </script>
 {% endblock %}
@@ -27,14 +27,13 @@
 
 {% block content %}
 
+
 <div class='span12 recent-activity'>
     <h2 class='recent-activity-header'>all activity</h2>
 
         <h3 class='recent-activity-small-header'>my code</h3>
             <table class="my-recent-stream">
                 {% for notification, snippet in my_code_notifications_all %}
-                <span>{{notification.reason}}</span>
-<!--                TODO: NOTIFICATION IS NOT READING CORRECTLY-->
         <!--                Activity Picture, done in CSS-->
                         <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
                                                   {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
@@ -49,6 +48,7 @@
                                 {% else %}
                                     <span class="image-{{notification.reason}}"></span>
                                 {% endif %}
+
                             </td>
         <!--                Info on the activity and chunk-->
                             <td class="note-activity">
@@ -73,10 +73,9 @@
                             <td class="note-on-what">
                                 <span>{{notification.comment.chunk.name}}</span>
                                 <br>
-                                <span class="grey-text">{{notification.comment.created}} ago</span>
+                                <span class="grey-text">{{notification.comment.created|timesince_human}} ago</span>
                             </td>
                         </tr>
-
 
                 {% endfor %}
             </table>
@@ -121,11 +120,13 @@
                             <td class="note-on-what">
                                 <span>{{notification.comment.chunk.name}}</span>
                                 <br>
-                                <span class="grey-text">{{notification.comment.created}} ago</span>
+                                <span class="grey-text">{{notification.comment.created|timesince_human}} ago</span>
                             </td>
                         </tr>
-
                 {% endfor %}
             </table>
 </div>
+
+
 {% endblock %}
+

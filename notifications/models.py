@@ -83,10 +83,12 @@ def add_vote_notification(sender, instance, created=False, raw=False, **kwargs):
 #            'comment_author': instance.comment.author
 #        })
         site = Site.objects.get_current()
+
+        # past_vote_notifications = Notification.objects.filter(recipient=instance.comment.author, comment=instance.comment ,reason='V')
         notification = Notification(recipient = instance.comment.author, reason='V')
         notification.submission = instance.comment.chunk.file.submission
-        notification.vote = instance
         notification.comment = instance.comment
+        notification.vote = instance
         notification.save()
         return
 
