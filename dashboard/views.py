@@ -21,6 +21,18 @@ import sys
 import operator
 import logging
 
+
+@login_required
+def notificationSeen(request):
+    if request.method == "POST":
+        noteID = request.POST["notification_id"]
+        note = Notification.objects.filter(id=noteID)
+        note.seen = True
+        note.save()
+    
+    return HttpResponse("ASDFGHJKL")
+
+
 #METHODS FOR URLS
 @login_required
 def dashboard(request):
@@ -153,11 +165,11 @@ def create_recent_activity_list(*args):
     return recent_activity[::-1] #we reverse the list, because the list has 0 index as earliest action.
 
 ## End of unused methods
-## 
+##
 
 '''
 Returns most recent unseen notifications on the users' code and others' code related to the user.
-Returns two lists of tuples (notification, code snippet)
+Returns TWO lists of tuples (notification, code snippet)
 Can change maxNotifications to get all notifications as well.
 '''
 def get_recent_notifications(dashboard_user, maxNotifications = 5):
@@ -176,7 +188,7 @@ def get_recent_notifications(dashboard_user, maxNotifications = 5):
     return add_snippets(my_notifications), add_snippets(other_notifications)
 
 '''
-Turns a list of notifications into list of tuples (notification, snippet)
+Turns a list of notifications into list of tuples in the form (notification, snippet).
 '''
 def add_snippets(notifications):
     notifications_with_snippets = []
@@ -189,8 +201,6 @@ def add_snippets(notifications):
                 snippet = snippet[:snippet_max_len]
         notifications_with_snippets.append( (notif,snippet) )
     return notifications_with_snippets
-
-
 
 def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_more_tasks = False):
     def annotate_tasks_with_counts(tasks):
@@ -295,11 +305,4 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         'my_code_notifications': my_code_notifications,
         'other_code_notifications': other_code_notifications,
     })
-
-def notificationSeen(request):
-    logging.debug("hello world")
-    noteID = request.POST("id")
-    note = Notification.objects.filter(id=noteID)
-    note.seen = True
-    note.save()
 
