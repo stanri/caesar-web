@@ -157,7 +157,7 @@ def create_recent_activity_list(*args):
 
 '''
 Returns most recent unseen notifications on the users' code and others' code related to the user.
-Returns two lists of tuples (notification, code snippet)
+Returns TWO lists of tuples (notification, code snippet)
 Can change maxNotifications to get all notifications as well.
 '''
 def get_recent_notifications(dashboard_user, maxNotifications = 5):
