@@ -19,19 +19,17 @@ import sys
 
 
 class Notification(models.Model):
-    SUMMARY = 'S'
     REPLY = 'R'
-    COMMENT_ON_SUBMISSION = 'C'
+    DIRECT_COMMENT = 'C'
     VOTE = 'V'
-    ACTIVITY_ON_CHUNK = 'A' #chunk you are not submitter of
-    ACTIVITY_ON_SUBMITTED_CODE = 'U'
+    ACTIVITY_ON_OTHERS_CODE = 'A'
+    ACTIVITY_ON_MY_CODE = 'U'
     REASON_CHOICES = (
-            (SUMMARY, 'Summary'),
             (REPLY, 'Received reply'),
-            (COMMENT_ON_SUBMISSION, 'Received comment on submission'),
+            (DIRECT_COMMENT, 'Received comment on submission'),
             (VOTE, 'Received vote on comment'),
-            (ACTIVITY_ON_CHUNK, 'There is activity on code you have reviewed before'),
-            (ACTIVITY_ON_SUBMITTED_CODE, 'There is activity on your code'),
+            (ACTIVITY_ON_OTHERS_CODE, 'There is activity on code you have reviewed before'),
+            (ACTIVITY_ON_MY_CODE, 'There is activity on your code'),
     )
 
     submission = models.ForeignKey(Submission, blank=True, null=True, related_name='notifications')
@@ -116,9 +114,7 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
         reply = instance
         while reply.parent is not None:
             if ((reply.parent.author != reply.author)):
-                notification = Notification(recipient = instance.parent.author, reason=REPLY, submission=submission)
-                notification.submission = submission
-                notification.comment = instance
+                notification = Notification(recipient = instance.parent.author, reason=REPLY, submission=submission, comment=instance)
                 notification.save()
                 notified_users.add(instance.parent.author)
             reply = reply.parent #this is used to go up the reply tree.
@@ -127,9 +123,7 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
         if instance.parent ==  None:
             for author in submission_authors:
                 if instance.author != author:
-                    notification = Notification(recipient = author, reason=COMMENT_ON_SUBMISSION)
-                    notification.submission = submission
-                    notification.comment = instance
+                    notification = Notification(recipient = author, reason=DIRECT_COMMENT, submission=submission, comment=instance)
                     notification.save()
                     notified_users.add(author)
 
@@ -146,14 +140,13 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
 
         for user in related_users:
             if user not in notified_users and user != instance.author:
+                notification = Notification(recipient = user, submission=submission, comment=instance)
                 if user in submission_authors: #check if author equality works (or do we need to compare id's?)
                     #user gets an 'activity on their code' notification
-                    notification = Notification(recipient = user, reason=ACTIVITY_ON_SUBMITTED_CODE)
+                    notification.reason=ACTIVITY_ON_MY_CODE
                 else:
                     #user gets an 'activity on other code' notification
-                    notification = Notification(recipient = user, reason=ACTIVITY_ON_CHUNK)
-                notification.submission = submission
-                notification.comment = instance
+                    notification.reason=ACTIVITY_ON_OTHERS_CODE
                 notification.save()
                 notified_users.add(user)
 
