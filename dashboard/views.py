@@ -65,7 +65,7 @@ def dashboard(request):
 @login_required
 def all_activity(request):
     user = request.user
-    maxNotifications = 1000
+    maxNotifications = 1000 #should be more than enough to get all the 
     my_code_notifications_all, other_code_notifications_all = get_recent_notifications(user, maxNotifications)
     return render(request, 'dashboard/activity.html', {
         'my_code_notifications_all': my_code_notifications_all,
@@ -81,98 +81,12 @@ def student_dashboard(request, username):
     return dashboard_for(request, other_user)
 
 
-# HELPER METHODS FOR NOTIFICATIONS BELOW
-#Note: The methods that use filter for notifications aren't used by what we wrote, but are left here
-#in case someone needs them in the future for other updates to Caesar.
-'''
-Returns a list of tuples in the form of (i, i.created) where i is a notification that comes from a comment
-on the Users code sample.
-'''
-def collect_comments_from_submissions(dashboard_user):
-    all_notifications = []
-    user_submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='C')
-    for notification in user_submission_notifications:  #this is done to have a list of notifications instead of a list of lists.
-        all_notifications.append((notification, notification.created))
-    return all_notifications
-
-'''
-Returns a list of tuples in the form of (reply, reply.created) where reply is a comment that is a child
-to a parent comment created by the dashboard user.
-'''
-def collect_replies_to_user(dashboard_user):
-    replies = []
-    submission_notifications = Notification.objects.filter(recipient=dashboard_user).filter(reason='R').select_related('comment')
-    for notification in submission_notifications:
-        if notification.comment.parent is not None:
-            if notification.comment.parent.author == dashboard_user:
-                replies.append((notification, notification.created))
-    return replies
-
-'''
-Returns a list of tuples in the form of (i, i.created) where i is a notification that comes from activity on
-both the Users code and Others' code
-'''
-def collect_activity(dashboard_user):
-    #TODO: how can i do this in one query?
-    user_activity = Notification.objects.filter(recipient=dashboard_user).filter(reason='U')
-    general_activity = Notification.objects.filter(recipient=dashboard_user).filter(reason='A')
-    all_notifications = [(i, i.created) for i in user_activity]
-    all_notifications.extend([(i, i.created) for i in general_activity])
-    return all_notifications
-
-'''
-Returns a list of notifications in the form of (notification, notification.vote.modified) with the comment with the most recent
-vote activity at the end of the list.
-'''
-def collect_recent_votes(dashboard_user):
-    votes_tuple_list = []
-    votes_on_user = Notification.objects.filter(recipient=dashboard_user).filter(reason='V')
-    for vote_notification in votes_on_user:
-        votes_tuple_list.append((vote_notification, vote_notification.vote.modified))
-    return votes_tuple_list
-
-'''
-Returns a list of all notififcations for a user.
-'''
-def collect_all_notifications(dashboard_user):
-    notifications_list = []
-    all_notifications = Notification.objects.filter(recipient=dashboard_user).select_related('comment__chunk__file__submission__authors')
-    for notification in all_notifications:
-        if notification.vote is not None:
-            notifications_list.append((notification, notification.vote.modified))
-        else:
-            notifications_list.append((notification, notification.created))
-    return notifications_list
-
-'''
-Returns a sorted list all of the list arguments by their time of modification or creation, depending on the object,
-where the 0 index is used for the latest action. (votes use modification time, comments use creation time)
-@param *args - Any number of arguments passed in. Arguments should be a list of tuples in the form (notification,
-notification.created).
-'''
-def create_recent_activity_list(*args):
-    list_of_lists = [i for i in args]
-
-    #list comp. flattens list_of_lists
-    #(see http://stackoverflow.com/questions/716477/join-list-of-lists-in-python)
-    recent_activity_tuple = [inner for outer in list_of_lists for inner in outer]
-
-    #sorts the list by the time entry in the second position of each tuple.
-    recent_activity_tuple.sort(key = lambda object_time_tuple: object_time_tuple[1])
-
-    #Now that sorting is done, create a list of just the notification objects with snippets
-    recent_activity = add_snippets([i[0] for i in recent_activity_tuple] )
-    return recent_activity[::-1] #we reverse the list, because the list has 0 index as earliest action.
-
-## End of unused methods
-##
-
-'''
-Returns most recent unseen notifications on the users' code and others' code related to the user.
-Returns TWO lists of tuples (notification, code snippet)
-Can change maxNotifications to get all notifications as well.
-'''
 def get_recent_notifications(dashboard_user, maxNotifications = 5):
+    '''
+    Returns most recent unseen notifications on the users' code and others' code related to the user.
+    Returns TWO lists of tuples (notification, code snippet)
+    Can change maxNotifications to get all notifications as well.
+    '''
     my_notifications = []
     other_notifications = []
     #using prefetch_related because submission can have MULTIPLE authors (many-to-one not supported by select_related)
@@ -187,10 +101,10 @@ def get_recent_notifications(dashboard_user, maxNotifications = 5):
             break
     return add_snippets(my_notifications), add_snippets(other_notifications)
 
-'''
-Turns a list of notifications into list of tuples in the form (notification, snippet).
-'''
 def add_snippets(notifications):
+    '''
+    Turns a list of notifications into list of tuples in the form (notification, snippet).
+    '''
     notifications_with_snippets = []
     snippet_max_len = 100
     for notif in notifications:
@@ -236,11 +150,11 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         .annotate(last_modified=Max('files__chunks__comments__modified'))\
         .reverse()
 
-    '''
-    Gathers data from submissions of a user, including comments and number of reviewers on those submissions.
-    @attr - submissions - QuerySet of submissions.
-    '''
     def collect_submission_data(submissions):
+        '''
+        Gathers data from submissions of a user, including comments and number of reviewers on those submissions.
+        @attr - submissions - QuerySet of submissions.
+        '''
         data = []
         for submission in submissions:
             user_comments = Comment.objects.filter(chunk__file__submission=submission).filter(type='U').count()

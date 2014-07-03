@@ -20,16 +20,16 @@ import sys
 
 class Notification(models.Model):
     SUMMARY = 'S'
-    RECEIVED_REPLY = 'R'
+    REPLY = 'R'
     COMMENT_ON_SUBMISSION = 'C'
-    VOTE_ON_COMMENT = 'V'
+    VOTE = 'V'
     ACTIVITY_ON_CHUNK = 'A' #chunk you are not submitter of
     ACTIVITY_ON_SUBMITTED_CODE = 'U'
     REASON_CHOICES = (
             (SUMMARY, 'Summary'),
-            (RECEIVED_REPLY, 'Received reply'),
+            (REPLY, 'Received reply'),
             (COMMENT_ON_SUBMISSION, 'Received comment on submission'),
-            (VOTE_ON_COMMENT, 'Received vote on comment'),
+            (VOTE, 'Received vote on comment'),
             (ACTIVITY_ON_CHUNK, 'There is activity on code you have reviewed before'),
             (ACTIVITY_ON_SUBMITTED_CODE, 'There is activity on your code'),
     )
@@ -85,20 +85,18 @@ def add_vote_notification(sender, instance, created=False, raw=False, **kwargs):
         site = Site.objects.get_current()
 
         # past_vote_notifications = Notification.objects.filter(recipient=instance.comment.author, comment=instance.comment ,reason='V')
-        notification = Notification(recipient = instance.comment.author, reason='V')
-        notification.submission = instance.comment.chunk.file.submission
-        notification.comment = instance.comment
-        notification.vote = instance
+        notification = Notification(recipient = instance.comment.author, reason=VOTE, comment=instance.comment, vote=instance, \
+            submission=instance.comment.chunk.file.submission)
         notification.save()
         return
 
-'''
-Creates a new Notification object for replies and new comments on a users submission.
-'''
 #Note: comment in the args and in the 'comment': comment line might need to be instance
 #i.e. ...(sender, instance...) and 'comment': instance
 @receiver(post_save, sender=Comment)
 def add_comment_notification(sender, instance, created=False, raw=False, **kwargs):
+    '''
+    Creates a new Notification object for replies and new comments on a users submission.
+    '''
     if created and not raw:
 #        context = Context({
 #        'site': site,
@@ -118,7 +116,7 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
         reply = instance
         while reply.parent is not None:
             if ((reply.parent.author != reply.author)):
-                notification = Notification(recipient = instance.parent.author, reason='R')
+                notification = Notification(recipient = instance.parent.author, reason=REPLY, submission=submission)
                 notification.submission = submission
                 notification.comment = instance
                 notification.save()
@@ -129,7 +127,7 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
         if instance.parent ==  None:
             for author in submission_authors:
                 if instance.author != author:
-                    notification = Notification(recipient = author, reason='C')
+                    notification = Notification(recipient = author, reason=COMMENT_ON_SUBMISSION)
                     notification.submission = submission
                     notification.comment = instance
                     notification.save()
@@ -150,10 +148,10 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
             if user not in notified_users and user != instance.author:
                 if user in submission_authors: #check if author equality works (or do we need to compare id's?)
                     #user gets an 'activity on their code' notification
-                    notification = Notification(recipient = user, reason='U')
+                    notification = Notification(recipient = user, reason=ACTIVITY_ON_SUBMITTED_CODE)
                 else:
                     #user gets an 'activity on other code' notification
-                    notification = Notification(recipient = user, reason='A')
+                    notification = Notification(recipient = user, reason=ACTIVITY_ON_CHUNK)
                 notification.submission = submission
                 notification.comment = instance
                 notification.save()
