@@ -10,15 +10,23 @@
 {% block js %}
 {{ block.super }}
 <script>
-
-// TODO: javascript stuff here
+    
+$(document).ready(function() {
+    $('.note-line').click(function(e){
+        var activityType = this.id.split('-')[0];
+        var comment_Id = this.id.split('-')[1];
+        var chunk_Id = this.id.split('-')[2];
+        var notificationID = this.id.split('-')[3];
+        window.open ("/chunks/view/" + chunk_Id + "#" + activityType + "-" + comment_Id);
+        return false;
+    });
+})
 
 </script>
 {% endblock %}
 
 {% block breadcrumbs %}
   <a class="breadcrumb first-breadcrumb" href="{% url 'dashboard.views.dashboard' %}">Dashboard</a>
-  <span class="breadcrumb">all activity</span>
 {% endblock %}
 
 {% block secondary-toolbar %}

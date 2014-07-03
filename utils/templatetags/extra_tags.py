@@ -9,7 +9,7 @@ register = template.Library()
 @register.filter(name='timesince_human')
 def humanize_timesince(date):
     if not isinstance(date, datetime.datetime):
-        return "Invalid date"
+        return "forever"
         
     delta = datetime.datetime.now() - date
 
