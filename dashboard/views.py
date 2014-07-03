@@ -26,18 +26,10 @@ import logging
 def notificationSeen(request):
     if request.method == "POST":
         noteID = request.POST["notification_id"]
-<<<<<<< HEAD
         note = Notification.objects.get(id=noteID)
         if note.recipient.user == request.user:
             note.seen = True
             note.save()
-=======
-        note = Notification.objects.filter(id=noteID)
-        note.seen = True
-        note.save()
-
-    return HttpResponse("ASDFGHJKL")
->>>>>>> d65b13f85ae9dc501c8f7115b8210f5d9819e39a
 
 
 #METHODS FOR URLS
