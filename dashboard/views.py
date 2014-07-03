@@ -117,9 +117,11 @@ def add_snippets(notifications):
         notifications_with_snippets.append( (notif,snippet) )
     return notifications_with_snippets
 
-#TODO: dashboard_user is the user's dashboard the logged in user is viewing. go over these
-#calls to it and see if request.user (logged in user) should be used instead.
 def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_more_tasks = False):
+    '''
+    Generates the dashboard for a specific user, which is passed in as the dashboard_user argument. This
+    is particularly useful for staff to view students code.
+    '''
     def annotate_tasks_with_counts(tasks):
         return tasks.annotate(comment_count=Count('chunk__comments', distinct=True),
                        reviewer_count=Count('chunk__tasks', distinct=True))
