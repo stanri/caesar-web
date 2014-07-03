@@ -4,6 +4,6 @@ urlpatterns = patterns('dashboard.views',
     (r'^$', 'dashboard'),
     (r'^dashboard/(?P<username>\w+)', 'student_dashboard'),
     (r'^activity', 'all_activity'),
-    (r'^notificationSeen', 'notificationSeen')
+    (r'^notificationSeen/$', 'notificationSeen')
 )
 
