@@ -54,8 +54,7 @@ def dashboard(request):
 def all_activity(request):
     user = request.user
     maxNotifications = 1000
-    my_code_notifications_all = get_recent_notifications(user, maxNotifications)
-    other_code_notifications_all = get_recent_notifications(user, maxNotifications)
+    my_code_notifications_all, other_code_notifications_all = get_recent_notifications(user, maxNotifications)
     return render(request, 'dashboard/activity.html', {
         'my_code_notifications_all': my_code_notifications_all,
         'other_code_notifications_all': other_code_notifications_all

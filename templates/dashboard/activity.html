@@ -34,8 +34,6 @@
         <h3 class='recent-activity-small-header'>my code</h3>
             <table class="my-recent-stream">
                 {% for notification, snippet in my_code_notifications_all %}
-                <span>{{notification.reason}}</span>
-<!--                TODO: NOTIFICATION IS NOT READING CORRECTLY-->
         <!--                Activity Picture, done in CSS-->
                         <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
                                                   {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
@@ -75,18 +73,9 @@
                             <td class="note-on-what">
                                 <span>{{notification.comment.chunk.name}}</span>
                                 <br>
-<<<<<<< HEAD
                                 <span class="grey-text">{{notification.comment.created|timesince_human}} ago</span>
                             </td>
                         </tr>
-
-                    {% endif %}
-=======
-                                <span class="grey-text">{{notification.comment.created}} ago</span>
-                            </td>
-                        </tr>
-
->>>>>>> a9d083c6d84b010ee5357afb0923e35318846edb
 
                 {% endfor %}
             </table>
@@ -94,14 +83,6 @@
             <table class="others-recent-stream">
                 {% for notification, snippet in other_code_notifications_all %}
 
-<<<<<<< HEAD
-                    {% if request.user not in notification.comment.chunk.file.submission.authors.all%}
-                        <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}
-                                                  {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}
-                                                  {% endif %}">
-                            <td class="note-image">
-                                <span class="image-{{notification.reason}}"></span>
-=======
                         <tr class="note-line" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
                                                   {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
                                                   {% endif %}_all">
@@ -115,7 +96,6 @@
                                 {% else %}
                                     <span class="image-{{notification.reason}}"></span>
                                 {% endif %}
->>>>>>> a9d083c6d84b010ee5357afb0923e35318846edb
                             </td>
         <!--                Info on the activity and chunk-->
                             <td class="note-activity">
@@ -140,24 +120,13 @@
                             <td class="note-on-what">
                                 <span>{{notification.comment.chunk.name}}</span>
                                 <br>
-<<<<<<< HEAD
                                 <span class="grey-text">{{notification.comment.created|timesince_human}} ago</span>
                             </td>
                         </tr>
-                    {% endif %}
                 {% endfor %}
             </table>
 </div>
 
 
 {% endblock %}
-=======
-                                <span class="grey-text">{{notification.comment.created}} ago</span>
-                            </td>
-                        </tr>
 
-                {% endfor %}
-            </table>
-</div>
-{% endblock %}
->>>>>>> a9d083c6d84b010ee5357afb0923e35318846edb
