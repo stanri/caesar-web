@@ -64,6 +64,7 @@ def dashboard(request):
 
 @login_required
 def all_activity(request):
+    '''Renders the all activity page of the user'''
     user = request.user #this should only be called when requesting user is the dashboard_user. staff cannot see the all-activity link
     max_notifications = 1000 #should be more than enough to get all the
     my_code_notifications_all, other_code_notifications_all = get_recent_notifications(user, max_notifications, False)
@@ -71,6 +72,16 @@ def all_activity(request):
         'my_code_notifications_all': my_code_notifications_all,
         'other_code_notifications_all': other_code_notifications_all
     })
+
+
+@login_required
+def code_upload(request):
+    '''Renders the personal code upload page for users to review whatever code they want'''
+    user = request.user
+    return render(request, 'dashboard/code_upload.html', {
+        'user': user,
+        })
+
 
 @staff_member_required
 def student_dashboard(request, username):
@@ -216,7 +227,7 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
             slack_left = total_slack - used_slack
             current_slack_data.append((membership.semester, slack_left))
 
-    #determine if dashboard viewer is the dashbboard user or not (staff vieweing student dashboard)
+    #determine if dashboard viewer is the dashboard user or not (staff vieweing student dashboard)
     if request.user == dashboard_user:
         is_dashboard_user = True
     else:

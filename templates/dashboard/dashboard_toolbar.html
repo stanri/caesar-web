@@ -1,6 +1,9 @@
 <div id="secondary-toolbar-inner">
   <div id="instructions-text">
-	    <p>Welcome to Caesar, the Course 6 code reviewing network!</p>
+	    <p class="align-left">Welcome to Caesar, the Course 6 code reviewing network!</p>
+	    <p class="code-upload" class="align-right">
+	    	<a href="{% url 'dashboard.views.code_upload' %}" class="align-right">Personal Code Upload</a>
+		</p>
 
 <!--You may want to <a class='instructions' href="{% url 'accounts.views.edit_profile' user.username %}">update your profile</a> with a little more about yourself.-->
 

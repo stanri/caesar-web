@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load extra_tags %}
+
+{% block css %}
+{{ block.super }}
+
+<link rel="stylesheet" href="{{ STATIC_URL }}css/dashboard.css" type="text/css" />
+{% endblock %}
+
+{% block breadcrumbs %}
+  <a class="breadcrumb first-breadcrumb" href="{% url 'dashboard.views.dashboard' %}">Dashboard</a>
+  <span class="breadcrumb">code upload</span>
+{% endblock %}
+
+{% block secondary-toolbar %}
+{% include "dashboard/dashboard_toolbar.html" %}
+{% endblock %}
+
+{% block content %}
+
+<h3> Code upload for personal use </h3>
+
+{% endblock %}
