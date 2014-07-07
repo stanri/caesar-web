@@ -185,6 +185,10 @@ table.current-assignment {
     margin: 0px;
 }
 
+.bold-notification td{
+    font-weight: bold;
+}
+
 span.image-C, span.image-R{
     font-family: sans-serif;
     display: block;
