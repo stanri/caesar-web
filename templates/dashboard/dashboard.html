@@ -109,10 +109,11 @@ $(document).ready(function() {
 
 <div class='span12 recent-activity'>
     <h2 class='recent-activity-header'>recent activity</h2>
+    {% if is_dashboard_user %}
       <div class="all-activity-link">
-        <!-- TODO: only show this link if user is dashboard_user -->
         <a href="{% url 'dashboard.views.all_activity' %}"> See all activity </a>
       </div>
+    {% endif %}
 
         <h3 class='recent-activity-small-header'>my code</h3>
             <table class="my-recent-stream">
