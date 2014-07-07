@@ -64,9 +64,9 @@ def dashboard(request):
 
 @login_required
 def all_activity(request):
-    user = request.user
-    maxNotifications = 1000 #should be more than enough to get all the
-    my_code_notifications_all, other_code_notifications_all = get_recent_notifications(user, maxNotifications, False)
+    user = request.user #this should only be called when requesting user is the dashboard_user. staff cannot see the all-activity link
+    max_notifications = 1000 #should be more than enough to get all the
+    my_code_notifications_all, other_code_notifications_all = get_recent_notifications(user, max_notifications, False)
     return render(request, 'dashboard/activity.html', {
         'my_code_notifications_all': my_code_notifications_all,
         'other_code_notifications_all': other_code_notifications_all
@@ -80,28 +80,29 @@ def student_dashboard(request, username):
         raise Http404
     return dashboard_for(request, other_user)
 
-def get_recent_notifications(dashboard_user, maxNotifications = 5, filter_for_unseen = True):
+def get_recent_notifications(dashboard_user, max_notifications = 5, filter_for_unseen = True):
     '''
     Returns most recent unseen notifications on the users' code and others' code related to the user.
     Returns TWO lists of tuples (notification, code snippet)
     dashboard_user - the user we're seeing the dashboard of, NOT the logged in user
-    maxNotifications - the maximum number of notifications in each generated list
+    max_notifications - the maximum number of notifications in each generated list
     filter_for_unseen - if True, we look for notifications that have not been marked as seen yet. If False, we get all notifications for the dashboard_user, regardless of their seen property.
     '''
     my_notifications = []
     other_notifications = []
     if filter_for_unseen:
         #using prefetch_related because submission can have MULTIPLE authors (many-to-one not supported by select_related)
+        # TODO: prefetch/select related a lot MORE things
         new_notifications = Notification.objects.filter(recipient=dashboard_user, seen=False).order_by('-created').prefetch_related('submission__authors')
     else:
         new_notifications = Notification.objects.filter(recipient=dashboard_user).order_by('-created').prefetch_related('submission__authors')
     for notification in new_notifications:
         authors = notification.submission.authors.all()
-        if len(my_notifications) < maxNotifications and dashboard_user in authors:
+        if len(my_notifications) < max_notifications and dashboard_user in authors:
             my_notifications.append(notification)
-        if len(other_notifications) < maxNotifications and dashboard_user not in authors:
+        if len(other_notifications) < max_notifications and dashboard_user not in authors:
             other_notifications.append(notification)
-        if len(my_notifications) >= maxNotifications and len(other_notifications) >= maxNotifications:
+        if len(my_notifications) >= max_notifications and len(other_notifications) >= max_notifications:
             break
     return add_snippets(my_notifications), add_snippets(other_notifications)
 
@@ -215,6 +216,12 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
             slack_left = total_slack - used_slack
             current_slack_data.append((membership.semester, slack_left))
 
+    #determine if dashboard viewer is the dashbboard user or not (staff vieweing student dashboard)
+    if request.user == dashboard_user:
+        is_dashboard_user = True
+    else:
+        is_dashboard_user = False
+
     return render(request, 'dashboard/dashboard.html', {
         'active_tasks': active_tasks,
         'completed_tasks': completed_tasks,
@@ -227,5 +234,6 @@ def dashboard_for(request, dashboard_user, new_task_count = 0, allow_requesting_
         'current_slack_data': current_slack_data,
         'my_code_notifications': my_code_notifications,
         'other_code_notifications': other_code_notifications,
+        'is_dashboard_user': is_dashboard_user,
     })
 

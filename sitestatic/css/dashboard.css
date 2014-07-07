@@ -5,10 +5,6 @@ div.assignment-header {
     padding-top: 2em;
 }
 
-td [class*='note-']{
-    color:pink !important;
-}
-
 .note-line{
     border-bottom: 1px solid #aaa;
     position: relative;
@@ -224,7 +220,7 @@ span.image-U, .image-A{
 .recent-activity-header {
     text-align: left;
     display: inline-block;
-    width: 50%;
+    width: 91%;
     margin-bottom: 0px;
 }
 
@@ -235,7 +231,6 @@ span.image-U, .image-A{
 .all-activity-link {
     text-align: right;
     display: inline-block;
-    width: 49.6%;
 }
 
 .note-activity{
