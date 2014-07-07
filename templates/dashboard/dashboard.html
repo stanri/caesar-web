@@ -86,7 +86,6 @@ $(document).ready(function() {
         var chunk_Id = this.id.split('-')[2];
         var notificationID = this.id.split('-')[3];
         $.post(caesar.urls.notificationSeen, {notification_id: notificationID,} );
-        console.log("click");
         window.open ("/chunks/view/" + chunk_Id + "#" + activityType + "-" + comment_Id);
         return false;
     });
