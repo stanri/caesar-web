@@ -242,4 +242,13 @@ span.image-U, .image-A{
     text-align: right;
 }
 
+.align-left {
+    float: left;
+    text-align: left;
+}
+
+.align-right {
+    float: right;
+    text-align: right;
+}
 
