@@ -252,3 +252,18 @@ span.image-U, .image-A{
     text-align: right;
 }
 
+.upload-header {
+    text-align: left;
+    display: inline-block;
+    width: 91%;
+    margin-bottom: 0px;
+}
+
+.upload-small-header {
+    margin: 0px;
+}
+
+.submit-code {
+    width: 600px;
+    height: 430px;
+}

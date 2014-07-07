@@ -101,6 +101,7 @@ def register(request, email, code):
             if user is not None:
                 if user.is_active:
                     user.profile.role = 'A'
+                    #TODO: Add user to life semester shit here.
                     user.profile.save()
                     auth.login(request, user)
                     return redirect(redirect_to)
@@ -421,7 +422,7 @@ def all_extensions(request, milestone_id):
     student_slack = ["".join([str(student)+"\\n" for student in students_with_no_slack])]
     for slack_days in range(1,current_milestone.max_extension+1):
         student_slack.append("".join([str(ext.user.username)+"\\n" for ext in extensions.filter(slack_used=slack_days)]))
-    
+
     return render(request, 'accounts/all_extensions.html', {
         'current_milestone': current_milestone,
         'student_slack': student_slack
