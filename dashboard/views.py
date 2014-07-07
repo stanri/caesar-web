@@ -30,6 +30,7 @@ def notificationSeen(request):
         if note.recipient == request.user:
             note.seen = True
             note.save()
+    return HttpResponse("")
 
 
 #METHODS FOR URLS

@@ -14,12 +14,17 @@
 $(document).ready(function() {
     
     $('.unseen').css("background-color", "#eee");
+    $('.unseen td').css("font-weight","bold");
 
     $('.note-line').click(function(e){
         var activityType = this.id.split('-')[0];
         var comment_Id = this.id.split('-')[1];
         var chunk_Id = this.id.split('-')[2];
         var notificationID = this.id.split('-')[3];
+        var classy = $(this).attr('class');
+//        if (classy == "note-line unseen"){
+//            $(this).attr('class','note-line seen');   
+//        }
         $.post(caesar.urls.notificationSeen, {notification_id: notificationID,} );
         window.open ("/chunks/view/" + chunk_Id + "#" + activityType + "-" + comment_Id);
         return false;
@@ -51,7 +56,7 @@ $(document).ready(function() {
         <!--                Activity Picture, done in CSS-->
                         <tr class="note-line {% if notification.seen == True %}seen{% else %}unseen{% endif %}" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
                                                   {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
-                                                  {% endif %}_all">
+                                                  {% endif %}-all">
                             <td class="note-image">
                                 {% if notification.reason == 'V' %}
                                     {% if notification.vote.value == 1 %}
@@ -99,7 +104,7 @@ $(document).ready(function() {
 
                         <tr class="note-line {% if notification.seen == True %}seen{% else %}unseen{% endif %}" id="{% if notification.reason == 'V' %}voteup-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
                                                   {% else %}comment-{{notification.comment.id}}-{{notification.comment.chunk.id}}-{{notification.id}}
-                                                  {% endif %}_all">
+                                                  {% endif %}-all">
                             <td class="note-image">
                                 {% if notification.reason == 'V' %}
                                     {% if notification.vote.value == 1 %}
