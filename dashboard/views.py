@@ -90,19 +90,17 @@ def submit_code_upload(request):
     user = request.user
     if request.method == "POST":
         code = request.POST["code"]
-        milestone_name = request.POST["milestone_name"]
+        milestone_name = request.POST["title"]
 
-        assignment = Assignment.objects.filter(name='Personal Code Upload', semester=Lifetime)
-        new_submit_milestone = Milestone(assignment=assignment, name=milestone_name, type='S')
+        assignment = Assignment.objects.get(name='Personal Code Upload')
+        new_submit_milestone = SubmitMilestone(assignment=assignment, name=milestone_name)
+        new_submit_milestone.save()
         new_submission = Submission(milestone=new_submit_milestone, name=milestone_name)
-        new_file = File(submission=new_submission, data=code) #WHAT DO ABOUT PATH
+        new_submission.save()
+        new_file = File(submission=new_submission, data=code) #does file path matter?
+        new_file.save()
         new_chunk = Chunk(file=new_file, name=milestone_name) #start, end, name
         chunk_id = new_chunk.id
-
-        new_submit_milestone.save()
-        new_submission.save()
-        new_file.save()
-        new_chunk.save()
 
     return render(request, '/chunks/view/' + chunk_id, {
         'user': user,
