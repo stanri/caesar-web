@@ -38,7 +38,8 @@
                 more_work: '{% url "tasks.views.more_work" %}',
                 edit_membership: '{% url "accounts.views.edit_membership" %}',
                 publish_code: '{% url "chunks.views.publish_code" %}',
-                notificationSeen: '{% url "dashboard.views.notificationSeen" %}'
+                notificationSeen: '{% url "dashboard.views.notificationSeen" %}',
+                submit_code_upload: '{% url "dashboard.views.submit_code_upload" %}'
             }
         };
 
@@ -92,7 +93,7 @@
 
     {% if "caesar" in request.get_host %}
     <!-- GhostRec usability tracking -->
-    <!-- 
+    <!--
     <script type="text/javascript">
     (function() {
         var host = ("https:" == document.location.protocol ? "https://secure." : "http://www.") + 'eemt.se';
@@ -113,25 +114,25 @@
     <script type="text/javascript">
     /* create dictionary of hashtags */
     // TODO: Dynamically generate this
-    hashtags = { 
-    {% for article in articles %} 
+    hashtags = {
+    {% for article in articles %}
         '{{article.slug}}':'{% url "wiki_view" article.get_url %}',
     {% endfor %} }
-    /*   hashtags = { 
-         
+    /*   hashtags = {
+
             'repexposure':'/wiki//repexposure',
-         
+
             'joe':'/wiki//joe',
-         
+
             'namingconvention':'/wiki//namingconvention',
-         
+
             'lgtm':'/wiki//lgtm',
-         
+
             'important':'/wiki//important',
          }
     */
      </script>
-     <script type="text/javascript" src = "{{STATIC_URL}}/js/hashtag.js" ></script>    
+     <script type="text/javascript" src = "{{STATIC_URL}}/js/hashtag.js" ></script>
     {% endblock %}
 
 

@@ -474,9 +474,13 @@ class StaffMarker(models.Model):
 #    '''
 #    Creates the necessary databases for personal code upload to work. Run this at the bottom
 #    of this file to ensure no issues arise when trying to add personal code.
+#    Subject: Life
+#    Semester: Lifetime
+#    Assignment: Personal Code Upload
 #    '''
-#    subject_query = Subject.objects.filter(name='Personal Code Upload')
-#    semester_query =  Semester.objects.filter(semester='Life')
+#    subject_query = Subject.objects.filter(name='Life')
+#    semester_query =  Semester.objects.filter(semester='Lifetime')
+#    assignment_query =  Assignment.objects.filter(name='Personal Code Upload')
 #    if len(subject_query) == 0:
 #        subject = Subject(name='Personal Code Upload')
 #        subject_query = Subject.objects.filter(name='Personal Code Upload')
@@ -486,6 +490,8 @@ class StaffMarker(models.Model):
 #        #have been updated.
 #        semester = Semester(semester='Life', subject=subject_query[0])
 #        semester.save()
+#    if len(assignment_query) == 0:
+#       do stuff
 #    return
 #
 #create_code_upload_dbs()

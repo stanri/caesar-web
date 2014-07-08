@@ -74,13 +74,29 @@ def all_activity(request):
         'other_code_notifications_all': other_code_notifications_all
     })
 
-
+#NOTE:
+#ALL USERS USE SAME SEMESTER, SUBJECT, AND ASSIGNMENT
 @login_required
 def code_upload(request):
     '''Renders the personal code upload page for users to review whatever code they want'''
     user = request.user
     return render(request, 'dashboard/code_upload.html', {
         'user': user,
+        })
+
+@login_required
+def submit_code_upload(request):
+    '''Renders the personal code upload page for users to review whatever code they want'''
+    user = request.user
+    if request.method == "POST":
+        code = request.POST["code"]
+        milestone_name = request.POST["milestone_name"]
+        #MAKE A NEW SUBMIT MILESTONE EACH TIME
+        submission = Submission(milestone=submit_milestone, name=assignment_name)
+
+    return render(request, 'dashboard/code_upload.html', {
+        'user': user,
+        'chunk_id': chunk_id,
         })
 
 
