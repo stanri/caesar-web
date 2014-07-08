@@ -470,22 +470,22 @@ class StaffMarker(models.Model):
     start_line = models.IntegerField(blank=True, null=True)
     end_line = models.IntegerField(blank=True, null=True)
 
-def create_code_upload_dbs():
-    '''
-    Creates the necessary databases for personal code upload to work. Run this at the bottom
-    of this file to ensure no issues arise when trying to add personal code.
-    '''
-    subject_query = Subject.objects.filter(name='Personal Code Upload')
-    semester_query =  Semester.objects.filter(semester='Life')
-    if len(subject_query) == 0:
-        subject = Subject(name='Personal Code Upload')
-        subject_query = Subject.objects.filter(name='Personal Code Upload')
-        subject.save()
-    if len(semester_query) == 0:
-        #we use subject_query[0] since it will either be the right subject or will
-        #have been updated.
-        semester = Semester(semester='Life', subject=subject_query[0])
-        semester.save()
-    return
-
-create_code_upload_dbs()
+#def create_code_upload_dbs():
+#    '''
+#    Creates the necessary databases for personal code upload to work. Run this at the bottom
+#    of this file to ensure no issues arise when trying to add personal code.
+#    '''
+#    subject_query = Subject.objects.filter(name='Personal Code Upload')
+#    semester_query =  Semester.objects.filter(semester='Life')
+#    if len(subject_query) == 0:
+#        subject = Subject(name='Personal Code Upload')
+#        subject_query = Subject.objects.filter(name='Personal Code Upload')
+#        subject.save()
+#    if len(semester_query) == 0:
+#        #we use subject_query[0] since it will either be the right subject or will
+#        #have been updated.
+#        semester = Semester(semester='Life', subject=subject_query[0])
+#        semester.save()
+#    return
+#
+#create_code_upload_dbs()
