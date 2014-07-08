@@ -99,15 +99,17 @@ def submit_code_upload(request):
         new_submit_milestone.save()
         new_submission = Submission(milestone=new_submit_milestone, name=milestone_name)
         new_submission.save()
-        new_file = File(submission=new_submission, data=code) #does file path matter?
+        new_file = File(submission=new_submission, data=code, path="Private/Personal_Code_Upload/"+user.username+"/src/"+milestone_name) #does file path matter?
         new_file.save()
-        new_chunk = Chunk(file=new_file, name=milestone_name) #start, end, name
-        chunk_id = new_chunk.id
+        code_size = len(code.split('\n'))
+        new_chunk = Chunk(file=new_file, name=milestone_name, start=0, end=code_size, student_lines=code_size, staff_portion=0) #start, end, name
+        new_chunk.save()
 
-    return render(request, 'dashboard/code_upload.html', {
-        'user': user,
-        'chunk_id': chunk_id
-        })
+    return HttpResponseRedirect(reverse('chunks.views.view_chunk', args=(new_chunk.id,) ))
+    # return render(request, 'dashboard/code_upload.html', {
+    #     'user': user,
+    #     'chunk_id': chunk_id
+    #     })
 
 @staff_member_required
 def student_dashboard(request, username):
