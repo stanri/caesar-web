@@ -9,7 +9,7 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from  django.core.exceptions import ObjectDoesNotExist
 
-from chunks.models import Chunk, Assignment, Milestone, SubmitMilestone, ReviewMilestone, Submission, StaffMarker
+from chunks.models import Chunk, Assignment, Milestone, SubmitMilestone, ReviewMilestone, Submission, StaffMarker, File
 from review.models import Comment, Vote
 from tasks.models import Task
 from tasks.routing import assign_tasks
