@@ -15,8 +15,6 @@ $(document).ready(function() {
     $('.code-submit').click(function(e){
         var milestone_name = $('.milestone-name')[0].value;
         var code = $('.submit-code')[0].value;
-        //METHOD CURRENTLY DOES NOTHING.
-        //TODO: SEE PREPROCESSOR/PARSE.PY FOR IDEA OF CREATION.
         $.post(caesar.urls.submit_code_upload, {milestone_name: milestone_name, code: code,} );
         window.open ("//chunks/view/" + chunk_id);
         return false;
@@ -39,8 +37,8 @@ $(document).ready(function() {
 
 <h2 class='upload-header'> code upload for personal use </h2>
 <h3 class='upload-small-header'>paste code in the text field below</h3>
-<form>Milestone name: <input class='milestone-name' type="text" name="milestone"><br>
+Milestone name: <input class='milestone-name' type="text" name="milestone"><br>
 <textarea class='submit-code' rows="1" cols="1"></textarea><br>
-<input class='code-submit' type="submit" name="Submit"><br></form>
+<input class='code-submit' type="submit" name="Submit"><br>
 
 {% endblock %}

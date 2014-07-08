@@ -106,7 +106,10 @@ def submit_code_upload(request):
         new_file.save()
         new_chunk.save()
 
-    return HttpResponseRedirect("/chunks/view/" + chunk_id)
+    return render(request, 'dashboard/code_upload.html', {
+        'user': user,
+        'chunk_id': chunk_id
+        })
 
 @staff_member_required
 def student_dashboard(request, username):
