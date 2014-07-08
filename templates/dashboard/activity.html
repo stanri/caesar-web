@@ -45,7 +45,7 @@ $(document).ready(function() {
 
 <div class='span12 recent-activity'>
     <h2 class='recent-activity-header'>all activity</h2>
-
+    
         <h3 class='recent-activity-small-header'>my code</h3>
             <table class="my-recent-stream">
                 {% for notification, snippet in my_code_notifications_all %}
@@ -94,6 +94,9 @@ $(document).ready(function() {
 
                 {% endfor %}
             </table>
+    
+        
+        
         <h3 class='recent-activity-small-header'>others' code</h3>
             <table class="others-recent-stream">
                 {% for notification, snippet in other_code_notifications_all %}
