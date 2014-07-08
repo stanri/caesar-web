@@ -95,7 +95,6 @@ def submit_code_upload(request):
         milestone_name = request.POST["milestone_name"]
 
         assignment = Assignment.objects.filter(name='Personal Code Upload', semester=Lifetime)
-        logging.debug(assignment)
         new_submit_milestone = Milestone(assignment=assignment, name=milestone_name, type='S')
         new_submission = Submission(milestone=new_submit_milestone, name=milestone_name)
         new_file = File(submission=new_submission, data=code) #WHAT DO ABOUT PATH
