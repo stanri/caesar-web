@@ -84,20 +84,28 @@ def code_upload(request):
         'user': user,
         })
 
-@login_required
-def submit_code_upload(request):
-    '''Renders the personal code upload page for users to review whatever code they want'''
-    user = request.user
-    if request.method == "POST":
-        code = request.POST["code"]
-        milestone_name = request.POST["milestone_name"]
-        #MAKE A NEW SUBMIT MILESTONE EACH TIME
-        submission = Submission(milestone=submit_milestone, name=assignment_name)
+# @login_required
+# def submit_code_upload(request):
+#     '''Renders the personal code upload page for users to review whatever code they want'''
+#     user = request.user
+#     if request.method == "POST":
+#         code = request.POST["code"]
+#         code_title = request.POST["milestone_name"]
+#         #MAKE A NEW SUBMIT MILESTONE EACH TIME
+#         assignment = Assignment.objects.get(name="Personal Code Upload")
+#         submit_milestone = SubmitMilestone(assignment=assignment, max_extension=0, name=code_title)
+#         submit_milestone.save()
+#         submission = Submission(milestone=submit_milestone, name=code_title)
+#         submission.save()
+#         code_file = File(submission=submission, data=code)
+#         code_file.save()
+#         code_chunk = Chunk(file=code_file, name=code_title)
 
-    return render(request, 'dashboard/code_upload.html', {
-        'user': user,
-        'chunk_id': chunk_id,
-        })
+
+#     return render(request, 'dashboard/code_upload.html', {
+#         'user': user,
+#         'chunk_id': chunk_id,
+#         })
 
 
 @staff_member_required
