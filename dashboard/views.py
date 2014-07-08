@@ -5,7 +5,7 @@ from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from  django.core.exceptions import ObjectDoesNotExist
 
@@ -86,13 +86,16 @@ def code_upload(request):
 
 @login_required
 def submit_code_upload(request):
-    '''Renders the personal code upload page for users to review whatever code they want'''
+    '''
+    Creates the necessary db objects for code to be submitted.
+    '''
     user = request.user
     if request.method == "POST":
         code = request.POST["code"]
         milestone_name = request.POST["milestone_name"]
 
         assignment = Assignment.objects.filter(name='Personal Code Upload', semester=Lifetime)
+        logging.debug(assignment)
         new_submit_milestone = Milestone(assignment=assignment, name=milestone_name, type='S')
         new_submission = Submission(milestone=new_submit_milestone, name=milestone_name)
         new_file = File(submission=new_submission, data=code) #WHAT DO ABOUT PATH
@@ -104,10 +107,7 @@ def submit_code_upload(request):
         new_file.save()
         new_chunk.save()
 
-    return render(request, '/chunks/view/' + chunk_id, {
-        'user': user,
-        'chunk_id': chunk_id,
-        })
+    return HttpResponseRedirect("/chunks/view/" + chunk_id)
 
 @staff_member_required
 def student_dashboard(request, username):
