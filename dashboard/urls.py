@@ -6,5 +6,6 @@ urlpatterns = patterns('dashboard.views',
     (r'^activity$', 'all_activity'),
     (r'^notificationSeen/$', 'notificationSeen'),
     (r'^code_upload$', 'code_upload'),
+    (r'^submit_code_upload$', 'submit_code_upload'),
 )
 
