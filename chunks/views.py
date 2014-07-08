@@ -42,10 +42,13 @@ def view_chunk(request, chunk_id):
     # # you weren't assigned to review the code
     # #   and
     # # you aren't a django admin
+    # #   and
+    # # this isn't a personal code upload chunk
     try:
-        user_membership = Member.objects.get(user=user, semester=semester)
-        if not user_membership.is_teacher() and not chunk.file.submission.has_author(user) and not is_reviewer and not user.is_staff:
-            raise PermissionDenied
+        if not semester.semester == "Lifetime" and not semester.subject == "Life":
+            user_membership = Member.objects.get(user=user, semester=semester)
+            if not user_membership.is_teacher() and not chunk.file.submission.has_author(user) and not is_reviewer and not user.is_staff:
+                raise PermissionDenied
     except Member.MultipleObjectsReturned:
         raise Http404 # you can't be multiple members for a class so this should never get called
     except Member.DoesNotExist:

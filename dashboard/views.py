@@ -102,7 +102,7 @@ def submit_code_upload(request):
         new_file = File(submission=new_submission, data=code, path="Private/Personal_Code_Upload/"+user.username+"/src/"+milestone_name) #does file path matter?
         new_file.save()
         code_size = len(code.split('\n'))
-        new_chunk = Chunk(file=new_file, name=milestone_name, start=0, end=code_size, student_lines=code_size, staff_portion=0) #start, end, name
+        new_chunk = Chunk(file=new_file, name=milestone_name, start=0, end=len(code), student_lines=code_size, staff_portion=0) #start, end, name
         new_chunk.save()
 
     return HttpResponseRedirect(reverse('chunks.views.view_chunk', args=(new_chunk.id,) ))
