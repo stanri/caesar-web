@@ -91,10 +91,20 @@ def submit_code_upload(request):
     if request.method == "POST":
         code = request.POST["code"]
         milestone_name = request.POST["milestone_name"]
-        #MAKE A NEW SUBMIT MILESTONE EACH TIME
-        submission = Submission(milestone=submit_milestone, name=assignment_name)
 
-    return render(request, 'dashboard/code_upload.html', {
+        assignment = Assignment.objects.filter(name='Personal Code Upload', semester=Lifetime)
+        new_submit_milestone = Milestone(assignment=assignment, name=milestone_name, type='S')
+        new_submission = Submission(milestone=new_submit_milestone, name=milestone_name)
+        new_file = File(submission=new_submission, data=code) #WHAT DO ABOUT PATH
+        new_chunk = Chunk(file=new_file, name=milestone_name) #start, end, name
+        chunk_id = new_chunk.id
+
+        new_submit_milestone.save()
+        new_submission.save()
+        new_file.save()
+        new_chunk.save()
+
+    return render(request, '/chunks/view/' + chunk_id, {
         'user': user,
         'chunk_id': chunk_id,
         })
