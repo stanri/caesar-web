@@ -106,10 +106,6 @@ def submit_code_upload(request):
         new_chunk.save()
 
     return HttpResponseRedirect(reverse('chunks.views.view_chunk', args=(new_chunk.id,) ))
-    # return render(request, 'dashboard/code_upload.html', {
-    #     'user': user,
-    #     'chunk_id': chunk_id
-    #     })
 
 @staff_member_required
 def student_dashboard(request, username):
