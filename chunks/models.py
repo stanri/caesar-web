@@ -491,7 +491,7 @@ class StaffMarker(models.Model):
 #        semester = Semester(semester='Life', subject=subject_query[0])
 #        semester.save()
 #    if len(assignment_query) == 0:
-#       do stuff
+#       do stuff here
 #    return
 #
 #create_code_upload_dbs()
