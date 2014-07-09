@@ -150,9 +150,9 @@ def get_recent_notifications(dashboard_user, max_notifications = 5, filter_for_u
     if filter_for_unseen:
         #using prefetch_related because submission can have MULTIPLE authors (many-to-one not supported by select_related)
         # TODO: prefetch/select related a lot MORE things
-        new_notifications = Notification.objects.filter(recipient=dashboard_user, seen=False).order_by('-created').prefetch_related('submission__authors')
+        new_notifications = Notification.objects.filter(recipient=dashboard_user, seen=False).order_by('-created').prefetch_related('submission__authors').select_related('comment__chunk__name').select_related('comment')
     else:
-        new_notifications = Notification.objects.filter(recipient=dashboard_user).order_by('-created').prefetch_related('submission__authors')
+        new_notifications = Notification.objects.filter(recipient=dashboard_user).order_by('-created').prefetch_related('submission__authors').select_related('comment__chunk__name').select_related('comment')
     for notification in new_notifications:
         authors = notification.submission.authors.all()
         if len(my_notifications) < max_notifications and dashboard_user in authors:
