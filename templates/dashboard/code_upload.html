@@ -9,17 +9,20 @@
 
 {% block js %}
 {{ block.super }}
-<script>
+<script type="text/javascript">
 
-//$(document).ready(function() {
-//    $('.code-submit').click(function(e){
-//        var milestone_name = $('.milestone-name')[0].value;
-//        var code = $('.submit-code')[0].value;
-//        $.post(caesar.urls.submit_code_upload, {milestone_name: milestone_name, code: code,} );
-//        window.open ("//chunks/view/" + chunk_id);
-//        return false;
-//    });
-//})
+// function submit_code() {
+//    console.log("Uploading code");
+//    var file_name = $('.filename')[0].value;
+//    var code = $('.code')[0].value;
+//    console.log(file_name)
+//    console.log(code)
+//    $.post(dashboard.views.submit_code_upload, {file_name: file_name, code: code,} );
+//    console.log("Posted")
+//    $('.invalid-filename').css('display', 'inline');
+//    return false;
+   
+// }
 
 </script>
 {% endblock %}
@@ -38,10 +41,12 @@
 <h2 class='upload-header'> code upload for personal use </h2>
 <h3 class='upload-small-header'>paste code in the text field below</h3>
 
-<form method="post" action="{% url 'dashboard.views.submit_code_upload' %}">
-    {% csrf_token %}
-    Milestone name: <input type="text" name="title"> <br>
-    <textarea type="text" name="code" class='submit-code'></textarea> <br>
+<form id="code-upload" method="post" action="{% url 'dashboard.views.submit_code_upload' %}">
+	{% csrf_token %}
+    File name (with extension): <input type="text" name="filename" class="filename"> 
+    {% if reload %} <span class="invalid-filename"> &nbsp; Please use a valid file extension</span> {% endif %}
+    <br>
+    <textarea type="text" name="code" class='code'></textarea> <br>
     <input type="submit" name="Submit"><br>
 </form>
 {% endblock %}

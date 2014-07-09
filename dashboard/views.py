@@ -7,7 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from  django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist
+from pygments.lexers import get_lexer_for_filename
 
 from chunks.models import Chunk, Assignment, Milestone, SubmitMilestone, ReviewMilestone, Submission, StaffMarker, File
 from review.models import Comment, Vote
@@ -82,30 +83,51 @@ def code_upload(request):
     user = request.user
     return render(request, 'dashboard/code_upload.html', {
         'user': user,
+        'reload': False,
         })
 
 @login_required
 def submit_code_upload(request):
+    if request.method == "POST":
+        file_name = request.POST["filename"]
+        try:
+            lexer = get_lexer_for_filename(file_name) #makes sure filename is valid
+            return view_code_upload_chunk(request)
+        except:
+            return render(request, 'dashboard/code_upload.html', {
+                'user': request.user,
+                'reload': True,
+                })
+
+
+
+@login_required
+def view_code_upload_chunk(request):
     '''
-    Creates the necessary db objects for code to be submitted.
+    Creates the necessary db objects for code to be created in Caesar as a chunk and redirects the user
+    to their new chunk after submission.
     '''
     user = request.user
     if request.method == "POST":
         code = request.POST["code"]
-        milestone_name = request.POST["title"]
+        file_name = request.POST["filename"]
 
         assignment = Assignment.objects.get(name='Personal Code Upload')
-        new_submit_milestone = SubmitMilestone(assignment=assignment, name=milestone_name)
+        new_submit_milestone = SubmitMilestone(assignment=assignment, name=file_name)
         new_submit_milestone.save()
-        new_submission = Submission(milestone=new_submit_milestone, name=milestone_name)
+        new_submission = Submission(milestone=new_submit_milestone, name=file_name)
+        new_submission.save() #save it so you can add an author which is a ManyToManyField
+        new_submission.authors.add(user)
         new_submission.save()
-        new_file = File(submission=new_submission, data=code, path="Private/Personal_Code_Upload/"+user.username+"/src/"+milestone_name) #does file path matter?
+        new_file = File(submission=new_submission, data=code, path="Private/Personal_Code_Upload/"+user.username+"/src/"+file_name) #does file path matter?
         new_file.save()
         code_size = len(code.split('\n'))
-        new_chunk = Chunk(file=new_file, name=milestone_name, start=0, end=len(code), student_lines=code_size, staff_portion=0) #start, end, name
+        new_chunk = Chunk(file=new_file, name=file_name, start=0, end=len(code), student_lines=code_size, staff_portion=0) #start, end, name
         new_chunk.save()
 
     return HttpResponseRedirect(reverse('chunks.views.view_chunk', args=(new_chunk.id,) ))
+    
+
 
 @staff_member_required
 def student_dashboard(request, username):
@@ -128,9 +150,9 @@ def get_recent_notifications(dashboard_user, max_notifications = 5, filter_for_u
     if filter_for_unseen:
         #using prefetch_related because submission can have MULTIPLE authors (many-to-one not supported by select_related)
         # TODO: prefetch/select related a lot MORE things
-        new_notifications = Notification.objects.filter(recipient=dashboard_user, seen=False).order_by('-created').prefetch_related('submission__authors')
+        new_notifications = Notification.objects.filter(recipient=dashboard_user, seen=False).order_by('-created').prefetch_related('submission__authors').select_related('comment__chunk__name').select_related('comment')
     else:
-        new_notifications = Notification.objects.filter(recipient=dashboard_user).order_by('-created').prefetch_related('submission__authors')
+        new_notifications = Notification.objects.filter(recipient=dashboard_user).order_by('-created').prefetch_related('submission__authors').select_related('comment__chunk__name').select_related('comment')
     for notification in new_notifications:
         authors = notification.submission.authors.all()
         if len(my_notifications) < max_notifications and dashboard_user in authors:
