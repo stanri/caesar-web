@@ -83,7 +83,7 @@ def add_vote_notification(sender, instance, created=False, raw=False, **kwargs):
         site = Site.objects.get_current()
 
         # past_vote_notifications = Notification.objects.filter(recipient=instance.comment.author, comment=instance.comment ,reason='V')
-        notification = Notification(recipient = instance.comment.author, reason=VOTE, comment=instance.comment, vote=instance, \
+        notification = Notification(recipient = instance.comment.author, reason='V', comment=instance.comment, vote=instance, \
             submission=instance.comment.chunk.file.submission)
         notification.save()
         return
@@ -114,7 +114,7 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
         reply = instance
         while reply.parent is not None:
             if ((reply.parent.author != reply.author)):
-                notification = Notification(recipient = instance.parent.author, reason=REPLY, submission=submission, comment=instance)
+                notification = Notification(recipient = instance.parent.author, reason='R', submission=submission, comment=instance)
                 notification.save()
                 notified_users.add(instance.parent.author)
             reply = reply.parent #this is used to go up the reply tree.
@@ -123,7 +123,7 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
         if instance.parent ==  None:
             for author in submission_authors:
                 if instance.author != author:
-                    notification = Notification(recipient = author, reason=DIRECT_COMMENT, submission=submission, comment=instance)
+                    notification = Notification(recipient = author, reason='C', submission=submission, comment=instance)
                     notification.save()
                     notified_users.add(author)
 
@@ -143,10 +143,10 @@ def add_comment_notification(sender, instance, created=False, raw=False, **kwarg
                 notification = Notification(recipient = user, submission=submission, comment=instance)
                 if user in submission_authors: #check if author equality works (or do we need to compare id's?)
                     #user gets an 'activity on their code' notification
-                    notification.reason=ACTIVITY_ON_MY_CODE
+                    notification.reason='U'
                 else:
                     #user gets an 'activity on other code' notification
-                    notification.reason=ACTIVITY_ON_OTHERS_CODE
+                    notification.reason='A'
                 notification.save()
                 notified_users.add(user)
 
