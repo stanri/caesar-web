@@ -275,30 +275,30 @@ span.image-U, .image-A{
 
 /*Shitty Tabs CSS*/
 
-ul#tabs { 
-    list-style-type: none; 
-    margin: 30px 0 0 0 !important; 
-    padding: 0 0 0.3em 0 !important; 
+ul#tabs {
+    list-style-type: none;
+    margin: 15px 0 0 0 !important;
+    padding: 0 0 0.3em 0 !important;
 }
-ul#tabs li { 
-    display: inline; 
+ul#tabs li {
+    display: inline;
 }
-.innerTab { 
-    color: #42454a; 
-    background-color: #dedbde; 
-    border: 1px solid #c9c3ba !important; 
-    border-bottom: none !important; 
-    padding: 0.3em !important; 
-    text-decoration: none; 
+.innerTab {
+    color: #42454a;
+    background-color: #dedbde;
+    border: 1px solid #c9c3ba !important;
+    border-bottom: none !important;
+    padding: 0.3em !important;
+    text-decoration: none;
 }
-.innerTab:hover { 
-    background-color: #f1f0ee !important; 
+.innerTab:hover {
+    background-color: #f1f0ee !important;
 }
 
-div.tabContent { 
+div.tabContent {
     border-top-color: #f1f0ee;
     border-top-style: solid;
     border-top-width: 1px;
-    padding: 0.5em;  
+    padding: 0.5em;
 }
 

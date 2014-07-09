@@ -12,7 +12,7 @@
 <script>
 
 $(document).ready(function() {
-    
+
     $('.unseen').css("background-color", "#eee");
     $('.unseen td').css("font-weight","bold");
 
@@ -26,24 +26,24 @@ $(document).ready(function() {
         window.open ("/chunks/view/" + chunk_Id + "#" + activityType + "-" + comment_Id);
         return false;
     });
-    
-    
+
+
     $('#clickMyTab').click(function(e){
         $('#myTab').css('display','block');
         $('#clickMyTab').css('background-color','#f1f0ee');
         $('#othersTab').css('display','none');
         $('#clickOthersTab').css('background-color','#dedbde');
-        
-        
+
+
     })
-    
+
     $('#clickOthersTab').click(function(e){
         $('#myTab').css('display','none');
         $('#clickMyTab').css('background-color','#dedbde');
         $('#othersTab').css('display','block');
         $('#clickOthersTab').css('background-color','#f1f0ee');
     })
-    
+
     $('#clickMyTab').trigger('click');
 })
 
@@ -65,14 +65,10 @@ $(document).ready(function() {
 
 <div class='span12 recent-activity'>
     <h2 class='recent-activity-header'>all activity</h2>
-    
-    
         <ul id="tabs">
             <li><span class="innerTab" id="clickMyTab">My Code</span></li>
             <li><span class="innerTab" id="clickOthersTab">Others' Code</span></li>
         </ul>
-    
-    
         <div class="tabContent" id="myTab">
             <h3 class='recent-activity-small-header'>my code</h3>
                 <table class="my-recent-stream">
@@ -123,8 +119,8 @@ $(document).ready(function() {
                     {% endfor %}
                 </table>
             </div>
-        
-        
+
+
         <div class="tabContent" id="othersTab">
             <h3 class='recent-activity-small-header'>others' code</h3>
                 <table class="others-recent-stream">
@@ -172,7 +168,7 @@ $(document).ready(function() {
                             </tr>
                     {% endfor %}
                 </table>
-            </div>    
+            </div>
 </div>
 
 
