@@ -5,11 +5,11 @@ from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from  django.core.exceptions import ObjectDoesNotExist
 
-from chunks.models import Chunk, Assignment, Milestone, SubmitMilestone, ReviewMilestone, Submission, StaffMarker
+from chunks.models import Chunk, Assignment, Milestone, SubmitMilestone, ReviewMilestone, Submission, StaffMarker, File
 from review.models import Comment, Vote
 from tasks.models import Task
 from tasks.routing import assign_tasks
@@ -86,28 +86,26 @@ def code_upload(request):
 
 @login_required
 def submit_code_upload(request):
-    '''Renders the personal code upload page for users to review whatever code they want'''
+    '''
+    Creates the necessary db objects for code to be submitted.
+    '''
     user = request.user
     if request.method == "POST":
         code = request.POST["code"]
-        milestone_name = request.POST["milestone_name"]
+        milestone_name = request.POST["title"]
 
-        assignment = Assignment.objects.filter(name='Personal Code Upload', semester=Lifetime)
-        new_submit_milestone = Milestone(assignment=assignment, name=milestone_name, type='S')
-        new_submission = Submission(milestone=new_submit_milestone, name=milestone_name)
-        new_file = File(submission=new_submission, data=code) #WHAT DO ABOUT PATH
-        new_chunk = Chunk(file=new_file, name=milestone_name) #start, end, name
-        chunk_id = new_chunk.id
-
+        assignment = Assignment.objects.get(name='Personal Code Upload')
+        new_submit_milestone = SubmitMilestone(assignment=assignment, name=milestone_name)
         new_submit_milestone.save()
+        new_submission = Submission(milestone=new_submit_milestone, name=milestone_name)
         new_submission.save()
+        new_file = File(submission=new_submission, data=code, path="Private/Personal_Code_Upload/"+user.username+"/src/"+milestone_name) #does file path matter?
         new_file.save()
+        code_size = len(code.split('\n'))
+        new_chunk = Chunk(file=new_file, name=milestone_name, start=0, end=len(code), student_lines=code_size, staff_portion=0) #start, end, name
         new_chunk.save()
 
-    return render(request, '/chunks/view/' + chunk_id, {
-        'user': user,
-        'chunk_id': chunk_id,
-        })
+    return HttpResponseRedirect(reverse('chunks.views.view_chunk', args=(new_chunk.id,) ))
 
 @staff_member_required
 def student_dashboard(request, username):
