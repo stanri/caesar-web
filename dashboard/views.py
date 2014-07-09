@@ -99,8 +99,6 @@ def submit_code_upload(request):
                 'reload': True,
                 })
 
-
-
 @login_required
 def view_code_upload_chunk(request):
     '''
@@ -113,13 +111,13 @@ def view_code_upload_chunk(request):
         file_name = request.POST["filename"]
 
         assignment = Assignment.objects.get(name='Personal Code Upload')
-        new_submit_milestone = SubmitMilestone(assignment=assignment, name=file_name)
+        new_submit_milestone = SubmitMilestone(assignment=assignment, name=file_name, duedate=datetime.datetime.now())
         new_submit_milestone.save()
         new_submission = Submission(milestone=new_submit_milestone, name=file_name)
         new_submission.save() #save it so you can add an author which is a ManyToManyField
         new_submission.authors.add(user)
         new_submission.save()
-        new_file = File(submission=new_submission, data=code, path="Private/Personal_Code_Upload/"+user.username+"/src/"+file_name) #does file path matter?
+        new_file = File(submission=new_submission, data=code, path=user.username+"/"+file_name) #does file path matter?
         new_file.save()
         code_size = len(code.split('\n'))
         new_chunk = Chunk(file=new_file, name=file_name, start=0, end=len(code), student_lines=code_size, staff_portion=0) #start, end, name
