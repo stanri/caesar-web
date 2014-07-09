@@ -40,7 +40,7 @@
 
 <form method="post" action="{% url 'dashboard.views.submit_code_upload' %}">
     {% csrf_token %}
-    Milestone name: <input type="text" name="title"> <br>
+    File name: <input type="text" name="title"> <br>
     <textarea type="text" name="code" class='submit-code'></textarea> <br>
     <input type="submit" name="Submit"><br>
 </form>

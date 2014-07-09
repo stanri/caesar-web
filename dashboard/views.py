@@ -87,7 +87,8 @@ def code_upload(request):
 @login_required
 def submit_code_upload(request):
     '''
-    Creates the necessary db objects for code to be submitted.
+    Creates the necessary db objects for code to be created in Caesar as a chunk and redirects the user
+    to their new chunk after submission.
     '''
     user = request.user
     if request.method == "POST":

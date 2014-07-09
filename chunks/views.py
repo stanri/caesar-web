@@ -27,6 +27,7 @@ from collections import defaultdict
 
 import logging
 
+#if not logged in, how do we deal with users stored comments?
 @login_required
 def view_chunk(request, chunk_id):
     user = request.user
@@ -45,6 +46,7 @@ def view_chunk(request, chunk_id):
     # #   and
     # # this isn't a personal code upload chunk
     try:
+
         if not semester.semester == "Lifetime" and not semester.subject == "Life":
             user_membership = Member.objects.get(user=user, semester=semester)
             if not user_membership.is_teacher() and not chunk.file.submission.has_author(user) and not is_reviewer and not user.is_staff:
