@@ -274,16 +274,32 @@ span.image-U, .image-A{
 
 
 
+/*Shitty Tabs CSS*/
 
+ul#tabs { 
+    list-style-type: none; 
+    margin: 30px 0 0 0 !important; 
+    padding: 0 0 0.3em 0 !important; 
+}
+ul#tabs li { 
+    display: inline; 
+}
+.innerTab { 
+    color: #42454a; 
+    background-color: #dedbde; 
+    border: 1px solid #c9c3ba !important; 
+    border-bottom: none !important; 
+    padding: 0.3em !important; 
+    text-decoration: none; 
+}
+.innerTab:hover { 
+    background-color: #f1f0ee !important; 
+}
 
-/*Shity Tab CSS */
-
-body { }
-ul#tabs { list-style-type: none; margin: 30px 0 0 0; padding: 0 0 0.3em 0; }
-ul#tabs li { display: inline; }
-ul#tabs li a { color: #aaa; background-color: #dedbde; border: 1px solid #c9c3ba; border-bottom: none; padding: 0.3em; text-decoration: none; }
-ul#tabs li a:hover { background-color: #f1f0ee; }
-ul#tabs li a.selected { color: #000; background-color: #f1f0ee; font-weight: bold; padding: 0.7em 0.3em 0.38em 0.3em; }
-div.tabContent { border-top: 1px solid #c9c3ba; background-color: #ffffff; }
-div.tabContent.hide { display: none; }
+div.tabContent { 
+    border-top-color: #f1f0ee;
+    border-top-style: solid;
+    border-top-width: 1px;
+    padding: 0.5em;  
+}
 
